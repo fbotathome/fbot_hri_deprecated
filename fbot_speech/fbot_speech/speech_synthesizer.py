@@ -1,0 +1,126 @@
+#!/usr/bin/env python3
+# coding: utf-8
+import os
+import numpy as np
+import riva.client
+import rospy
+import rospkg
+import warnings
+
+from scipy.io import wavfile
+from termcolor import colored
+from std_srvs.srv import SetBool
+from fbot_speech_msgs.srv import AudioPlayer, AudioPlayerByData, AudioPlayerByData_Request, SynthesizeSpeech, SynthesizeSpeech_Response, SynthesizeSpeech_Request
+from fbot_speech_msgs.msg import SynthesizeSpeechMessage
+from audio_common_msgs.msg import AudioData, AudioInfo
+import rclpy
+from rclpy.node import Node
+
+# Fetch the warning parameter from ROS parameters
+warning = rospy.get_param("warnings", False)
+if not warning:
+    # Suppress warnings if the parameter is set to False
+    warnings.filterwarnings("ignore")
+
+# Get the path of the 'fbot_speech' package
+PACK_DIR = rospkg.RosPack().get_path("fbot_speech")
+# Construct the path to the audio directory
+AUDIO_DIR = os.path.join(PACK_DIR, "audios/")
+# Set the filename for the generated audio file
+FILENAME = str(AUDIO_DIR) + "talk.wav"
+
+class SpeechSynthesizerNode(Node):
+    def __init__(self):
+        super().__init__('speech_synthesizer')
+        
+        self.get_logger().info("Initializing Speech Synthesizer Node...")
+        
+        # Parameters
+        self.config_defaults = {
+            "language_code": "en-US",
+            "sample_rate_hz": 44100,
+            "voice_name": "English-US.Male-1",
+        }
+        
+        self.configs = self.get_parameter("tts_configs", self.config_defaults)
+        
+        self.riva_url = self.get_parameter("riva/url", "localhost:50051")
+        auth = riva.client.Auth(uri=self.riva_url)
+        self.riva_tts = riva.client.SpeechSynthesisService(auth)
+
+        # Subscribe to a topic for text input
+        self.synthesizer_subscriber_param = self.get_parameter("subscribers/speech_synthesizer/topic", "/fbot_speech/ss/say_something")
+        self.create_subscription(SynthesizeSpeechMessage, self.synthesizer_subscriber_param, self.synthesize_speech_callback, 10)
+
+        # Create the service for speech synthesis
+        self.synthesizer_service_param = self.get_parameter("services/speech_synthesizer/service", "/fbot_speech/ss/say_something")
+        self.create_service(SynthesizeSpeech, self.synthesizer_service_param, self.synthesize_speech)
+
+        self.get_logger().info("Speech Synthesizer Node initialized!")
+
+    def synthesize_speech(self, request: SynthesizeSpeech_Request, response: SynthesizeSpeech_Response):
+        config = self.configs
+        speech = request.text
+        
+        try:
+            # Call Riva TTS to synthesize the speech
+            resp = self.riva_tts.synthesize(
+                custom_dictionary=config, 
+                text=speech,
+                voice_name=config["voice_name"], 
+                sample_rate_hz=config["sample_rate_hz"],
+                language_code=config["language_code"],
+                encoding=riva.client.AudioEncoding.LINEAR_PCM,
+            )
+            
+            # Convert the response audio to a NumPy array
+            audio_samples = np.frombuffer(resp.audio, dtype=np.int16)
+
+            # Prepare the audio data to send to the audio player
+            audio_data = AudioData()
+            audio_data.data = audio_samples.tobytes()
+            
+            audio_info = AudioInfo()
+            audio_info.sample_rate = config["sample_rate_hz"]
+            audio_info.channels = 1
+            audio_info.sample_format = '16'
+
+            # Fetch the audio player by data service parameter
+            audio_player_by_data_service_param = self.get_parameter("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data")
+            audio_player_client = self.create_client(AudioPlayerByData, audio_player_by_data_service_param)
+            
+            while not audio_player_client.wait_for_service(timeout_sec=1.0):
+                self.get_logger().info(f"Waiting for {audio_player_by_data_service_param} service...")
+            
+            # Create the request and send it
+            request = AudioPlayerByData_Request()
+            request.data = audio_data
+            request.audio_info = audio_info
+            future = audio_player_client.call_async(request)
+            future.result()
+
+            response.success = True
+            self.get_logger().info(f"Audio data played successfully.")
+        
+        except Exception as e:
+            response.success = False
+            self.get_logger().error(f"Error while synthesizing speech: {e}")
+        
+        return response
+
+    def synthesize_speech_callback(self, msg: SynthesizeSpeechMessage):
+        request = SynthesizeSpeech_Request()
+        request.text = msg.text
+        request.lang = msg.lang
+        self.synthesize_speech(request, SynthesizeSpeech_Response())
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = SpeechSynthesizerNode()
+    rclpy.spin(node)
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()

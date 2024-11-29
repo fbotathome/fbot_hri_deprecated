@@ -1,0 +1,34 @@
+publishers:
+  fbot_hotword_detection:
+    topic: "/fbot_speech/bhd/detected"
+
+subscribers:
+  fbot_hotword_detection:
+    topic: "/fbot_speech/bhd/hot_word"
+
+  speech_synthesizer:
+    topic: "/fbot_speech/ss/say_something"
+
+  stream_data:
+    topic: "/fbot_speech/ap/stream_data"
+
+services:
+  speech_recognizer:
+    service: "/fbot_speech/sr/speech_recognizer"
+
+  speech_sythesizer:
+    service: "/fbot_speech/ss/say_something"
+
+  audio_player:
+    service: "/fbot_speech/ap/audio_player"
+
+  audio_player_by_data:
+    service: "/fbot_speech/ap/audio_player_by_data"
+
+  stream_start:
+    service: "/fbot_speech/ap/stream_start"
+
+  stream_stop:
+    service: "/fbot_speech/ap/stream_stop"
+
+warnings: False

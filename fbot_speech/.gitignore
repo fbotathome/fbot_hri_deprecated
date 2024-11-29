@@ -1,0 +1,8 @@
+.vscode
+__pycache__
+*.pbmm
+*.scorer
+*speech_input.wav
+include/model/facebook
+include/model/total_count
+*.pt
