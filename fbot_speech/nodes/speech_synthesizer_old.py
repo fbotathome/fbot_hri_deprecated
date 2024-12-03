@@ -2,7 +2,6 @@
 # coding: utf-8
 import os
 import torch
-import rospy
 import numpy as np
 import rospkg
 import pickle
@@ -12,7 +11,7 @@ from scipy.io import wavfile
 from termcolor import colored
 from rclpy.node import Node
 from std_srvs.srv import SetBool
-from fbot_speech_msgs.srv import AudioPlayer, AudioPlayerByData, AudioPlayerByData_Request, SynthesizeSpeech, SynthesizeSpeech_Request, SynthesizeSpeech_Response
+from fbot_speech_msgs.srv import AudioPlayer, AudioPlayerByData, SynthesizeSpeech
 from fbot_speech_msgs.msg import SynthesizeSpeechMessage
 from audio_common_msgs.msg import AudioData, AudioInfo
 import rclpy
@@ -33,9 +32,9 @@ class SpeechSynthesizerNode(Node):
         self.get_logger().info("Initializing Speech Synthesizer Node...")
         
         # Parameters
-        self.tag = self.get_parameter("fbot_speech_synthesizer/tag").get_parameter_value().string_value
-        self.vocoder_tag = self.get_parameter("fbot_speech_synthesizer/vocoder_tag").get_parameter_value().string_value
-        self.audio_player_by_data_service = self.get_parameter("services/audio_player_by_data/service").get_parameter_value().string_value
+        self.tag = self.get_parameter_or("fbot_speech_synthesizer/tag", "kan-bayashi/ljspeech_vits")
+        self.vocoder_tag = self.get_parameter_or("fbot_speech_synthesizer/vocoder_tag", "none")
+        self.audio_player_by_data_service = self.get_parameter_or("services/audio_player_by_data/service", "/butia_speech/ap/audio_player_by_data")
         
         self.model = None
         self.load_model()

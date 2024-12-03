@@ -5,10 +5,10 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     return LaunchDescription([
-        Node(name='speech_recognizer', 
+        Node(name='speech_recognizer_node', 
              package='fbot_speech', 
-             executable='speech_recognizer_old.py',
-             parameters=[PathJoinSubstitution(FindPackageShare('fbot_hri_bringup'), 'config', 'ros.yaml'), 
-                         PathJoinSubstitution(FindPackageShare('fbot_hri_bringup'), 'config', 'fbot_speech_recognizer_old.yaml')]
+             executable='speech_recognizer_old',
+             parameters=[PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', 'ros.yaml']), 
+                         PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', 'fbot_speech_recognizer_old.yaml'])]
             ),
     ])

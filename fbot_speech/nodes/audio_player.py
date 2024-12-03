@@ -30,12 +30,12 @@ class AudioPlayerNode(Node):
         wm = WavToMouth()
 
         # Get parameters
-        self.audio_player_service_param = self.get_parameter("services/audio_player/service").get_parameter_value().string_value
-        self.audio_player_by_data_service_param = self.get_parameter("services/audio_player_by_data/service").get_parameter_value().string_value
-        self.audio_player_stream_start_service_param = self.get_parameter("services/stream_start/service").get_parameter_value().string_value
-        self.audio_player_stream_stop_service_param = self.get_parameter("services/stream_stop/service").get_parameter_value().string_value
-        self.audio_player_stream_data_topic_param = self.get_parameter("subscribers/stream_data/topic").get_parameter_value().string_value
-        self.stream_timeout = self.get_parameter("stream_timeout").get_parameter_value().integer_value
+        self.audio_player_service_param = self.get_parameter_or("services/audio_player/service", "/butia_speech/ap/audio_player")
+        self.audio_player_by_data_service_param = self.get_parameter_or("services/audio_player_by_data/service", "/butia_speech/ap/audio_player_by_data")
+        self.audio_player_stream_start_service_param = self.get_parameter_or("services/stream_start/service", "/butia_speech/ap/stream_start")
+        self.audio_player_stream_stop_service_param = self.get_parameter_or("services/stream_stop/service", "/butia_speech/ap/stream_stop")
+        self.audio_player_stream_data_topic_param = self.get_parameter_or("subscribers/stream_data/topic", "/butia_speech/ap/stream_data")
+        self.stream_timeout = self.get_parameter_or("stream_timeout", 10)
 
         # Create services
         self.create_service(AudioPlayer, self.audio_player_service_param, self.to_talk)

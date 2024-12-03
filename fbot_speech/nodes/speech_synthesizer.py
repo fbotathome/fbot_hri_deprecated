@@ -42,18 +42,18 @@ class SpeechSynthesizerNode(Node):
             "voice_name": "English-US.Male-1",
         }
         
-        self.configs = self.get_parameter("tts_configs", self.config_defaults)
+        self.configs = self.get_parameter_or("tts_configs", self.config_defaults)
         
-        self.riva_url = self.get_parameter("riva/url", "localhost:50051")
+        self.riva_url = self.get_parameter_or("riva/url", "localhost:50051")
         auth = riva.client.Auth(uri=self.riva_url)
         self.riva_tts = riva.client.SpeechSynthesisService(auth)
 
         # Subscribe to a topic for text input
-        self.synthesizer_subscriber_param = self.get_parameter("subscribers/speech_synthesizer/topic", "/fbot_speech/ss/say_something")
+        self.synthesizer_subscriber_param = self.get_parameter_or("subscribers/speech_synthesizer/topic", "/fbot_speech/ss/say_something")
         self.create_subscription(SynthesizeSpeechMessage, self.synthesizer_subscriber_param, self.synthesize_speech_callback, 10)
 
         # Create the service for speech synthesis
-        self.synthesizer_service_param = self.get_parameter("services/speech_synthesizer/service", "/fbot_speech/ss/say_something")
+        self.synthesizer_service_param = self.get_parameter_or("services/speech_synthesizer/service", "/fbot_speech/ss/say_something")
         self.create_service(SynthesizeSpeech, self.synthesizer_service_param, self.synthesize_speech)
 
         self.get_logger().info("Speech Synthesizer Node initialized!")
@@ -86,7 +86,7 @@ class SpeechSynthesizerNode(Node):
             audio_info.sample_format = '16'
 
             # Fetch the audio player by data service parameter
-            audio_player_by_data_service_param = self.get_parameter("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data")
+            audio_player_by_data_service_param = self.get_parameter_or("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data")
             audio_player_client = self.create_client(AudioPlayerByData, audio_player_by_data_service_param)
             
             while not audio_player_client.wait_for_service(timeout_sec=1.0):

@@ -3,7 +3,6 @@ import os
 import struct
 import numpy as np
 import pyaudio
-import rospkg
 
 #PACK_DIR = rospkg.RosPack().get_path('fbot_hotword_detection')
 #sys.path.append(os.path.join(PACK_DIR, '/include/binding'))
@@ -13,7 +12,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../include/binding/'
 import pvporcupine
 
 access_key="Tbyk0dhsux2oYz/+GO8IGk05dCGmhTVze760CdDlA/vfLjkuGCqdRQ==" 
-class newDetectHotWord(Node):
+class newDetectHotWord():
     def __init__(self, keyword_path, sensitivity, library_path=None, model_path=None):
         # if library_path is None:
         #     library_path = pvporcupine.LIBRARY_PATH

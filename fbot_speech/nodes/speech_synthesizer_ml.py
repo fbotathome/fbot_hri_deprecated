@@ -71,20 +71,20 @@ class XTTSSpeechSynthesizerNode(Node):
             self.tts_model.cpu()
 
     def __read_params(self):
-        self.robot_name = self.get_parameter("robot_name", "BORIS").get_parameter_value().string_value.lower()
-        self.use_streaming = self.get_parameter("tts/use_streaming", False).get_parameter_value().bool_value
-        self.speech_synthesizer_service_name = self.get_parameter("services/speech_synthesizer/service", "/fbot_speech/ss/say_something").get_parameter_value().string_value
-        self.audio_player_by_data_service_name = self.get_parameter("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data").get_parameter_value().string_value
-        self.stream_start_service_name = self.get_parameter("services/stream_start/service", "/fbot_speech/ap/stream_start").get_parameter_value().string_value
-        self.stream_stop_service_name = self.get_parameter("services/stream_stop/service", "/fbot_speech/ap/stream_stop").get_parameter_value().string_value
-        self.stream_data_topic_name = self.get_parameter("subscribers/stream_data/topic", "/fbot_speech/ap/stream_data").get_parameter_value().string_value
-        self.tts_model_name = self.get_parameter("tts/model_name", "tts_models/multilingual/multi-dataset/xtts_v2").get_parameter_value().string_value
-        self.tts_config_file_name = self.get_parameter("tts/config_file_name", "config.json").get_parameter_value().string_value
-        self.tts_use_deepspeed = self.get_parameter("tts/use_deepspeed", False).get_parameter_value().bool_value
-        self.tts_use_cuda = self.get_parameter("tts/use_cuda", True).get_parameter_value().bool_value
-        self.tts_temperature = self.get_parameter("tts/temperature", 0.7).get_parameter_value().double_value
-        self.tts_speed = self.get_parameter("tts/speed", 1.0).get_parameter_value().double_value
-        self.tts_enable_text_splitting = self.get_parameter("tts/enable_text_splitting", True).get_parameter_value().bool_value
+        self.robot_name = self.get_parameter_or("robot_name", "BORIS")
+        self.use_streaming = self.get_parameter_or("tts/use_streaming", False)
+        self.speech_synthesizer_service_name = self.get_parameter_or("services/speech_synthesizer/service", "/fbot_speech/ss/say_something")
+        self.audio_player_by_data_service_name = self.get_parameter_or("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data")
+        self.stream_start_service_name = self.get_parameter_or("services/stream_start/service", "/fbot_speech/ap/stream_start")
+        self.stream_stop_service_name = self.get_parameter_or("services/stream_stop/service", "/fbot_speech/ap/stream_stop")
+        self.stream_data_topic_name = self.get_parameter_or("subscribers/stream_data/topic", "/fbot_speech/ap/stream_data")
+        self.tts_model_name = self.get_parameter_or("tts/model_name", "tts_models/multilingual/multi-dataset/xtts_v2")
+        self.tts_config_file_name = self.get_parameter_or("tts/config_file_name", "config.json")
+        self.tts_use_deepspeed = self.get_parameter_or("tts/use_deepspeed", False)
+        self.tts_use_cuda = self.get_parameter_or("tts/use_cuda", True)
+        self.tts_temperature = self.get_parameter_or("tts/temperature", 0.7)
+        self.tts_speed = self.get_parameter_or("tts/speed", 1.0)
+        self.tts_enable_text_splitting = self.get_parameter_or("tts/enable_text_splitting", True)
 
     def __init_comm(self):
         self.speech_synthesizer_service = self.create_service(SynthesizeSpeech, self.speech_synthesizer_service_name, self.synthesize_speech)

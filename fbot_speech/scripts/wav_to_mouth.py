@@ -20,7 +20,9 @@ class WavToMouth(Node):
 
     def __init__(self):
         super().__init__('wav_to_mouth')  # ROS 2 requires a node name
-        self.chunk_size = self.get_parameter("chunk_size").get_parameter_value().integer_value  # ROS 2 param retrieval
+        
+        self.chunk_size = self.get_parameter_or("chunk_size", 2048)
+
 
         self.data = []
         self.data_lock = Lock()  # To ensure thread-safe access to self.data
@@ -32,7 +34,8 @@ class WavToMouth(Node):
         self.audio_info = None
 
         self.output = Int16MultiArray()
-        self.mouth_gain = self.get_parameter("mouth_gain").get_parameter_value().double_value  # ROS 2 param retrieval
+        self.mouth_gain = self.get_parameter_or("mouth_gain", 2.5)
+
         self.angle_publisher = self.create_publisher(Int16MultiArray, "mouth", 1)  # ROS 2 publisher
         self.mouth_debug_publisher = self.create_publisher(Int16, "mouth_debug", 1)
 

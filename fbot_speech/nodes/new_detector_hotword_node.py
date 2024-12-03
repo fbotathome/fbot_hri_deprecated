@@ -16,7 +16,7 @@ class HotwordDetectorNode(Node):
         self.pack_dir = rospkg.RosPack().get_path('fbot_speech')
 
         # Parameters
-        self.sensibility = self.get_parameter("/fbot_hotword_detection/sensibility").get_parameter_value().double_value
+        self.sensibility = self.get_parameter_or("/fbot_hotword_detection/sensibility", 0.5)
 
         self.keyword = [
             self.pack_dir + '/resources/Hello-Boris_en_linux_v3_0_0.ppn',
@@ -28,8 +28,8 @@ class HotwordDetectorNode(Node):
         self.sensibility = [self.sensibility] * len(self.keyword)
 
         # Topics
-        self.detector_publisher_param = self.get_parameter("publishers/fbot_hotword_detection/topic").get_parameter_value().string_value
-        self.detector_subscriber_param = self.get_parameter("subscribers/fbot_hotword_detection/topic").get_parameter_value().string_value
+        self.detector_publisher_param = self.get_parameter_or("publishers/fbot_hotword_detection/topic", "/butia_speech/bhd/detected")
+        self.detector_subscriber_param = self.get_parameter_or("subscribers/fbot_hotword_detection/topic", "/butia_speech/bhd/hot_word")
         
         # Create publisher
         self.detector_publisher = self.create_publisher(Int16, self.detector_publisher_param, 10)

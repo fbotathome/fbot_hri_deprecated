@@ -4,7 +4,7 @@
 import rclpy
 from rclpy.node import Node
 from std_srvs.srv import Empty
-from fbot_speech_msgs.srv import SpeechToText, SpeechToTextResponse
+from fbot_speech_msgs.srv import SpeechToText
 import os
 import threading
 import time
@@ -23,27 +23,25 @@ class SpeechRecognizerNode(Node):
         super().__init__('speech_recognizer')
 
         # Declare parameters
-        self.declare_parameter("stt_configs", {
+        self.default_configs = {
             "spinner": False,
             "model": "distil-medium.en",
             "silero_sensitivity": 0.8,
             "device": "cpu",
-            "webrtc_sensitivity": 0.6,
+            "webrtc_sensitivity": 1,
             "post_speech_silence_duration": 1.0,
             "min_length_of_recording": 3,
             "min_gap_between_recordings": 0,
             "enable_realtime_transcription": False,
             "silero_deactivity_detection": True,
-        })
-        self.declare_parameter("stt_mic_timeout", 10)
-        self.declare_parameter("services/speech_recognizer/service", "/fbot_speech/sr/speech_recognizer")
+        }
 
         # Fetch configurations
-        self.configs = self.get_parameter("stt_configs").get_parameter_value().string_value
-        self.stt_mic_timeout = self.get_parameter("stt_mic_timeout").get_parameter_value().integer_value
+        self.configs = self.get_parameter_or("stt_configs", self.default_configs)
+        self.stt_mic_timeout = self.get_parameter_or("stt_mic_timeout", 10)
 
         # Setup the service
-        recognizer_service_param = self.get_parameter("services/speech_recognizer/service").get_parameter_value().string_value
+        recognizer_service_param = self.get_parameter_or("services/speech_recognizer/service", "/fbot_speech/sr/speech_recognizer")
         self.speech_recognition_service = self.create_service(SpeechToText, recognizer_service_param, self.handle_recognition)
 
         # Global recorder variable

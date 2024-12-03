@@ -4,7 +4,7 @@
 import rclpy
 from rclpy.node import Node
 from std_srvs.srv import Empty
-from fbot_speech_msgs.srv import SpeechToText, SpeechToTextResponse
+from fbot_speech_msgs.srv import SpeechToText
 from speech_recognition import Microphone, Recognizer, WaitTimeoutError
 from playsound import playsound
 import os
@@ -30,24 +30,17 @@ class SpeechRecognizerNode(Node):
         super().__init__('speech_recognizer')
 
         # Parameters
-        self.declare_parameter("noise_adjust_duration", 1)
-        self.declare_parameter("whisper_model", "small")
-        self.declare_parameter("phrase_time_limit", 8)
-        self.declare_parameter("timeout", 5)
-        self.declare_parameter("sample_rate", 16000)
-
-        self.noise_adjust_duration = self.get_parameter("noise_adjust_duration").get_parameter_value().integer_value
-        self.whisper_model = self.get_parameter("whisper_model").get_parameter_value().string_value
-        self.phrase_time_limit = self.get_parameter("phrase_time_limit").get_parameter_value().integer_value
-        self.timeout = self.get_parameter("timeout").get_parameter_value().integer_value
-        self.sample_rate = self.get_parameter("sample_rate").get_parameter_value().integer_value
+        self.noise_adjust_duration = self.get_parameter_or("noise_adjust_duration", 1)
+        self.whisper_model = self.get_parameter_or("whisper_model", "small")
+        self.phrase_time_limit = self.get_parameter_or("phrase_time_limit", 8)
+        self.timeout = self.get_parameter_or("timeout", 5)
+        self.sample_rate = self.get_parameter_or("sample_rate", 16000)
 
         # Recognizer initialization
         self.recognizer = Recognizer()
 
         # Service
-        self.declare_parameter("services/speech_recognizer/service", "/fbot_speech/sr/speech_recognizer")
-        recognizer_service_param = self.get_parameter("services/speech_recognizer/service").get_parameter_value().string_value
+        recognizer_service_param = self.get_parameter_or("services/speech_recognizer/service", "/fbot_speech/sr/speech_recognizer")
 
         self.speech_recognition_service = self.create_service(SpeechToText, recognizer_service_param, self.handle_recognition)
 

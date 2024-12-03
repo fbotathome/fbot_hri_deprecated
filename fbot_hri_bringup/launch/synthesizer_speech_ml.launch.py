@@ -12,20 +12,20 @@ def generate_launch_description():
         DeclareLaunchArgument('audio_player_machine', default_value=LaunchConfiguration('machine')),
         DeclareLaunchArgument('use_machine', default_value='true'),
 
-        Node(name='speech_synthesizer', 
+        Node(name='speech_synthesizer_node', 
              package='fbot_speech', 
-             executable='speech_synthesizer_ml.py',
+             executable='speech_synthesizer_ml',
              ros_arguments = [{'machine': LaunchConfiguration('speech_synthesizer_machine')}],
-             parameters=[PathJoinSubstitution(FindPackageShare('fbot_hri_bringup'), 'config', 'ros.yaml'),
-                         PathJoinSubstitution(FindPackageShare('fbot_hri_bringup'), 'config', 'fbot_speech_synthesizer_ml.yaml'), 
+             parameters=[PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', 'ros.yaml']),
+                         PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', 'fbot_speech_synthesizer_ml.yaml']), 
                          ]
             ),
-        Node(name='audio_player', 
+        Node(name='audio_player_node', 
              package='fbot_speech', 
-             executable='audio_player.py',
+             executable='audio_player',
              ros_arguments = [{'machine': LaunchConfiguration('audio_player_machine')}],
-             parameters=[PathJoinSubstitution(FindPackageShare('fbot_hri_bringup'), 'config', 'ros.yaml'), 
-                         PathJoinSubstitution(FindPackageShare('fbot_hri_bringup'), 'config', 'fbot_audio_player.yaml'), 
+             parameters=[PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', 'ros.yaml']), 
+                         PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', 'fbot_audio_player.yaml']), 
                         ]
             ),
     ])

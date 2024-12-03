@@ -7,6 +7,6 @@ def generate_launch_description():
     return LaunchDescription([
         Node(name='detector_hotword_node', 
              package='fbot_speech', 
-             executable='detector_hotword_node.py',
-             parameters=[PathJoinSubstitution(FindPackageShare('fbot_hri_bringup'), 'config', 'fbot_hotword_detection.yaml')]),
+             executable='detector_hotword_node',
+             parameters=[PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', 'fbot_hotword_detection.yaml'])]),
     ])
