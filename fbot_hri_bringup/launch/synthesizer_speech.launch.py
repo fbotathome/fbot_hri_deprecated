@@ -2,22 +2,18 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch_remote_ssh import NodeRemoteSSH
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     return LaunchDescription([
-        DeclareLaunchArgument('speech_synthesizer_machine', default_value='nuc'),
+        DeclareLaunchArgument('use_machine', default_value='true'),
+        DeclareLaunchArgument('speech_synthesizer_machine', default_value='jetson'),
 
-        NodeRemoteSSH(
-             user= 'jetson',
-             machine= LaunchConfiguration('speech_synthesizer_machine'),
+        Node(name='speech_synthesizer_node', 
              package='fbot_speech', 
              executable='speech_synthesizer',
-             source_paths=[
-                '/example/path/to/fbot2_ws/install/setup.zsh',
-                            ],
+             ros_arguments = [{'machine': LaunchConfiguration('speech_synthesizer_machine')}],
              parameters=[PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', 'ros.yaml']),
                          PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', 'fbot_speech_synthesizer.yaml']), 
                          ]
