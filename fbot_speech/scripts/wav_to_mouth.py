@@ -13,7 +13,7 @@ from threading import Lock, Event
 fbot_SPEECH_PKG = rospkg.RosPack().get_path("fbot_speech")
 AUDIO = os.path.join(fbot_SPEECH_PKG, "audios/")
 
-def map_range(x, in_min, in_max, out_min, out_max):
+def mapRange(x, in_min, in_max, out_min, out_max):
     return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
 
 class WavToMouth(Node):
@@ -50,24 +50,24 @@ class WavToMouth(Node):
 
         self.playback_done_event = Event()  # Event to signal playback completion
 
-    def divide_audio_in_chunks(self, audio_data, num_bytes=2):
+    def divideAudioInChunks(self, audio_data, num_bytes=2):
         chunks = []
         for start in range(0, len(audio_data), self.chunk_size*num_bytes):
             end = min(start + self.chunk_size*num_bytes, len(audio_data))
             chunks.append(audio_data[start:end])
         return chunks
 
-    def _read_data_of_audio(self):
+    def _readDataOfAudio(self):
         self.audio = wave.open(self.filepath, "rb")
         audio_data = self.audio.readframes(self.audio.getnframes())
-        self.data += self.divide_audio_in_chunks(audio_data, num_bytes=self.audio.getsampwidth())
+        self.data += self.divideAudioInChunks(audio_data, num_bytes=self.audio.getsampwidth())
         self.sample_rate = self.audio.getframerate()
         self.channels = self.audio.getnchannels()
 
-    def request_stop_stream(self):
+    def requestStopStream(self):
         self.request_stream_stop = True
 
-    def start_stream(self):
+    def startStream(self):
         with self.stream_lock:
             if self.streaming:
                 self.get_logger().warn("Stream is already running.")  # ROS 2 logger
@@ -79,7 +79,7 @@ class WavToMouth(Node):
                 self.stream = sd.OutputStream(
                     samplerate=self.sample_rate,
                     channels=self.channels,
-                    callback=self.audio_callback,
+                    callback=self.audioCallback,
                     blocksize=self.chunk_size,
                     dtype='int16'
                 )
@@ -88,7 +88,7 @@ class WavToMouth(Node):
             else:
                 self.get_logger().warn("Stream already initialized.")
 
-    def stop_stream(self):
+    def stopStream(self):
         with self.stream_lock:
             if not self.streaming:
                 self.get_logger().warn("Stream is not running.")
@@ -103,31 +103,31 @@ class WavToMouth(Node):
                 self.get_logger().info("Audio stream stopped.")
             sd.stop()
 
-    def set_audio_info(self, audio_info):
+    def setAudioInfo(self, audio_info):
         self.audio_info = audio_info
-        self._open_stream()
+        self._openStream()
 
-    def set_filepath(self, filepath):
+    def setFilepath(self, filepath):
         self.filepath = os.path.join(AUDIO, filepath)
-        self._read_data_of_audio()
+        self._readDataOfAudio()
 
-    def set_data_and_info(self, data, info):
-        self.data += self.divide_audio_in_chunks(data)
+    def setDataAndInfo(self, data, info):
+        self.data += self.divideAudioInChunks(data)
         self.audio_info = info
-        self._open_stream()
+        self._openStream()
 
-    def _open_stream(self):
+    def _openStream(self):
         if self.audio is not None:
             self.sample_rate = self.audio.getframerate()
             self.channels = self.audio.getnchannels()
         elif self.audio_info is not None:
-            self.sample_rate = self.audio_info.sample_rate
+            self.sample_rate = self.audio_info.rate
             self.channels = self.audio_info.channels
 
         self.audio = None
         self.audio_info = None
 
-    def _compute_chunk_rms(self, audio_chunk):
+    def _computeChunkRms(self, audio_chunk):
         """Compute the RMS value of an audio chunk."""
         count = len(audio_chunk) // 2
         format = "%dh" % count
@@ -136,16 +136,16 @@ class WavToMouth(Node):
         rms = np.sqrt(sum_squares / count)
         return rms
 
-    def _normalize_rms(self, rms_value, gain=2.5, max_rms=32768):
+    def _normalizeRms(self, rms_value, gain=2.5, max_rms=32768):
         """Normalize the RMS value to a range from 0 to 100."""
         rms_value = min(rms_value * gain, max_rms)
         return min(max(int((rms_value / max_rms) * 100), 0), 100)
 
-    def stream_data_callback(self, data):
+    def streamDataCallback(self, data):
         with self.data_lock:
-            self.data += self.divide_audio_in_chunks(data)
+            self.data += self.divideAudioInChunks(data)
 
-    def audio_callback(self, outdata, frames, time, status):
+    def audioCallback(self, outdata, frames, time, status):
         if status:
             self.get_logger().error(f"Stream status: {status}")
         with self.data_lock:
@@ -182,18 +182,20 @@ class WavToMouth(Node):
         outdata[:] = audio_array.reshape((frames, self.channels))
 
         # Compute RMS and publish mouth angles
-        rms = self._compute_chunk_rms(data)
-        mouth_angle = self._normalize_rms(rms, gain=self.mouth_gain)
+        rms = self._computeChunkRms(data)
+        mouth_angle = self._normalizeRms(rms, gain=self.mouth_gain)
         self.output.data = [mouth_angle, abs(100 - mouth_angle)]
         self.angle_publisher.publish(self.output)
-        self.mouth_debug_publisher.publish(Int16(mouth_angle))
+        mouth_angle_int16 = Int16()
+        mouth_angle_int16.data = mouth_angle
+        self.mouth_debug_publisher.publish(mouth_angle_int16)
 
-    def play_all_data(self):
+    def playAllData(self):
         # Clear the playback done event
         self.playback_done_event.clear()
         # Start the audio stream
-        self.start_stream()
+        self.startStream()
         # Wait until the playback is done
         self.playback_done_event.wait()
         # Stop the stream gracefully
-        self.stop_stream()
+        self.stopStream()

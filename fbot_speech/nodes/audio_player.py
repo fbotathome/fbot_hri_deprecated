@@ -30,11 +30,11 @@ class AudioPlayerNode(Node):
         wm = WavToMouth()
 
         # Get parameters
-        self.audio_player_service_param = self.get_parameter_or("services/audio_player/service", "/butia_speech/ap/audio_player")
-        self.audio_player_by_data_service_param = self.get_parameter_or("services/audio_player_by_data/service", "/butia_speech/ap/audio_player_by_data")
-        self.audio_player_stream_start_service_param = self.get_parameter_or("services/stream_start/service", "/butia_speech/ap/stream_start")
-        self.audio_player_stream_stop_service_param = self.get_parameter_or("services/stream_stop/service", "/butia_speech/ap/stream_stop")
-        self.audio_player_stream_data_topic_param = self.get_parameter_or("subscribers/stream_data/topic", "/butia_speech/ap/stream_data")
+        self.audio_player_service_param = self.get_parameter_or("services/audio_player/service", "/fbot_speech/ap/audio_player")
+        self.audio_player_by_data_service_param = self.get_parameter_or("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data")
+        self.audio_player_stream_start_service_param = self.get_parameter_or("services/stream_start/service", "/fbot_speech/ap/stream_start")
+        self.audio_player_stream_stop_service_param = self.get_parameter_or("services/stream_stop/service", "/fbot_speech/ap/stream_stop")
+        self.audio_player_stream_data_topic_param = self.get_parameter_or("subscribers/stream_data/topic", "/fbot_speech/ap/stream_data")
         self.stream_timeout = self.get_parameter_or("stream_timeout", 10)
 
         # Create services
@@ -68,7 +68,7 @@ class AudioPlayerNode(Node):
             response.success = False
             return response
 
-        data = request.data.data
+        data = request.data.uint8_data
         info = request.audio_info
         wm.set_data_and_info(data, info)
         wm.play_all_data()

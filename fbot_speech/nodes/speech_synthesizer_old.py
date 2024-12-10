@@ -22,7 +22,7 @@ from espnet2.utils.types import str_or_none
 MODEL_DIR = os.path.join(rospkg.RosPack().get_path("fbot_speech"), "include/model/total_count/")
 MODEL_NAME = "model.pkl"
 MODEL_PATH = os.path.join(MODEL_DIR, MODEL_NAME)
-AUDIO_DIR = os.path.join(rospkg.RosPack().get_path("fbot_speech"), "audios/")
+AUDIO_DIR = ("./audios")
 FILENAME = str(AUDIO_DIR) + "talk.wav"
 
 
@@ -34,7 +34,7 @@ class SpeechSynthesizerNode(Node):
         # Parameters
         self.tag = self.get_parameter_or("fbot_speech_synthesizer/tag", "kan-bayashi/ljspeech_vits")
         self.vocoder_tag = self.get_parameter_or("fbot_speech_synthesizer/vocoder_tag", "none")
-        self.audio_player_by_data_service = self.get_parameter_or("services/audio_player_by_data/service", "/butia_speech/ap/audio_player_by_data")
+        self.audio_player_by_data_service = self.get_parameter_or("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data")
         
         self.model = None
         self.load_model()
@@ -45,6 +45,8 @@ class SpeechSynthesizerNode(Node):
         self.get_logger().info("Speech Synthesizer Node initialized!")
 
     def load_model(self):
+        os.makedirs(MODEL_DIR, exist_ok=True)
+
         try:
             with open(MODEL_PATH, 'rb') as f:
                 self.model = pickle.load(f)
@@ -63,11 +65,12 @@ class SpeechSynthesizerNode(Node):
                                                      speed_control_alpha=1.15,
                                                      noise_scale=0.333,
                                                      noise_scale_dur=0.333)
+            print(self.model)
             self.get_logger().info("Model downloaded from the internet.")
             with open(MODEL_PATH, 'wb') as f:
                 pickle.dump(self.model, f)
 
-    def synthesize_speech(self, request: SynthesizeSpeech_Request, response: SynthesizeSpeech_Response):
+    def synthesize_speech(self, request, response):
         speech = request.text
         lang = request.lang if request.lang else "en"
         
@@ -78,12 +81,12 @@ class SpeechSynthesizerNode(Node):
                 wavfile.write(FILENAME, self.model.fs, wav_data)
             
             audio_data = AudioData()
-            audio_data.data = wav_data.tobytes()
+            audio_data.uint8_data = wav_data.tobytes()
 
             audio_info = AudioInfo()
-            audio_info.sample_rate = self.model.fs
+            audio_info.rate = self.model.fs
             audio_info.channels = 1
-            audio_info.sample_format = '16'
+            audio_info.format = 16
 
             # Wait for the audio player service
             self.get_logger().info(f"Calling audio player service: {self.audio_player_by_data_service}")
@@ -92,7 +95,7 @@ class SpeechSynthesizerNode(Node):
             while not audio_player_client.wait_for_service(timeout_sec=1.0):
                 self.get_logger().info(f"Waiting for {self.audio_player_by_data_service} service to become available...")
             
-            audio_player_request = AudioPlayerByData_Request()
+            audio_player_request = AudioPlayerByData.Request()
             audio_player_request.data = audio_data
             audio_player_request.audio_info = audio_info
             future = audio_player_client.call_async(audio_player_request)
@@ -107,10 +110,10 @@ class SpeechSynthesizerNode(Node):
         return response
 
     def synthesize_speech_callback(self, msg: SynthesizeSpeechMessage):
-        request = SynthesizeSpeech_Request()
+        request = SynthesizeSpeech()
         request.text = msg.text
         request.lang = msg.lang
-        self.synthesize_speech(request, SynthesizeSpeech_Response())
+        self.synthesize_speech(request, SynthesizeSpeech())
 
 def main(args=None):
     rclpy.init(args=args)
