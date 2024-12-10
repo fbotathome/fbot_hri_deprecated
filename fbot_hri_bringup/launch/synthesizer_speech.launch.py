@@ -4,13 +4,17 @@ from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from launch.substitutions import PathJoinSubstitution
 from launch_ros.substitutions import FindPackageShare
+from launch_remote_ssh import NodeRemoteSSH
 
 def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('use_machine', default_value='true'),
         DeclareLaunchArgument('speech_synthesizer_machine', default_value='jetson'),
 
-        Node(name='speech_synthesizer_node', 
+        NodeRemoteSSH(
+             name='speech_synthesizer_node',
+             user='gdorneles',
+             machine='192.168.1.103',
              package='fbot_speech', 
              executable='speech_synthesizer',
              ros_arguments = [{'machine': LaunchConfiguration('speech_synthesizer_machine')}],
