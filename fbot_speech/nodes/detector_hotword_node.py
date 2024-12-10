@@ -34,9 +34,9 @@ class HotwordDetectorNode(Node):
         self.detector.hear()
 
         # Timer to periodically check for hotword detection
-        self.timer = self.create_timer(0.1, self.process_hotword)
+        self.timer = self.create_timer(0.1, self.processHotword)
 
-    def process_hotword(self):
+    def processHotword(self):
         result = self.detector.process()
         if result:
             self.detector_publisher.publish(Empty())

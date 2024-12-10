@@ -39,8 +39,8 @@ class SpeechSynthesizerNode(Node):
         self.model = None
         self.load_model()
 
-        self.synthesizer_service = self.create_service(SynthesizeSpeech, '/fbot_speech/ss/say_something', self.synthesize_speech)
-        self.synthesizer_subscriber = self.create_subscription(SynthesizeSpeechMessage, '/fbot_speech/ss/say_something', self.synthesize_speech_callback, 10)
+        self.synthesizer_service = self.create_service(SynthesizeSpeech, '/fbot_speech/ss/say_something', self.synthesizeSpeech)
+        self.synthesizer_subscriber = self.create_subscription(SynthesizeSpeechMessage, '/fbot_speech/ss/say_something', self.synthesizeSpeechCallback, 10)
 
         self.get_logger().info("Speech Synthesizer Node initialized!")
 
@@ -70,7 +70,7 @@ class SpeechSynthesizerNode(Node):
             with open(MODEL_PATH, 'wb') as f:
                 pickle.dump(self.model, f)
 
-    def synthesize_speech(self, request, response):
+    def synthesizeSpeech(self, request, response):
         speech = request.text
         lang = request.lang if request.lang else "en"
         
@@ -109,11 +109,11 @@ class SpeechSynthesizerNode(Node):
         
         return response
 
-    def synthesize_speech_callback(self, msg: SynthesizeSpeechMessage):
+    def synthesizeSpeechCallback(self, msg: SynthesizeSpeechMessage):
         request = SynthesizeSpeech()
         request.text = msg.text
         request.lang = msg.lang
-        self.synthesize_speech(request, SynthesizeSpeech())
+        self.synthesizeSpeech(request, SynthesizeSpeech())
 
 def main(args=None):
     rclpy.init(args=args)

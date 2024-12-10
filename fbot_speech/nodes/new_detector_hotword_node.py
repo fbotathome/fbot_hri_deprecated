@@ -4,7 +4,7 @@ from rclpy.node import Node
 import os
 import warnings
 from std_msgs.msg import Int16
-from scripts.new_detect_hotword import newDetectHotWord
+from scripts.new_detect_hotword import NewDetectHotWord
 import rospkg
 from termcolor import colored
 
@@ -28,25 +28,27 @@ class HotwordDetectorNode(Node):
         self.sensibility = [self.sensibility] * len(self.keyword)
 
         # Topics
-        self.detector_publisher_param = self.get_parameter_or("publishers/fbot_hotword_detection/topic", "/butia_speech/bhd/detected")
-        self.detector_subscriber_param = self.get_parameter_or("subscribers/fbot_hotword_detection/topic", "/butia_speech/bhd/hot_word")
+        self.detector_publisher_param = self.get_parameter_or("publishers/fbot_hotword_detection/topic", "/fbot_speech/bhd/detected")
+        self.detector_subscriber_param = self.get_parameter_or("subscribers/fbot_hotword_detection/topic", "/fbot_speech/bhd/hot_word")
         
         # Create publisher
         self.detector_publisher = self.create_publisher(Int16, self.detector_publisher_param, 10)
 
         # Create hotword detector instance
-        self.detector = newDetectHotWord(self.keyword, self.sensibility)
+        self.detector = NewDetectHotWord(self.keyword, self.sensibility)
 
         # Start hearing for hotwords
         self.detector.hear()
 
         # Timer to periodically process the hotword detection
-        self.timer = self.create_timer(0.1, self.process_hotword)
+        self.timer = self.create_timer(0.1, self.processHotword)
 
-    def process_hotword(self):
+    def processHotword(self):
         result = self.detector.process()
         if result >= 0:
-            self.detector_publisher.publish(Int16(data=result))
+            data = Int16()
+            data.data = result
+            self.detector_publisher.publish(data)
             self.get_logger().info(f"Hotword Detected: {result}")
 
 

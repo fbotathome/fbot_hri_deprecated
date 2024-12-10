@@ -42,11 +42,11 @@ class SpeechRecognizerNode(Node):
         # Service
         recognizer_service_param = self.get_parameter_or("services/speech_recognizer/service", "/fbot_speech/sr/speech_recognizer")
 
-        self.speech_recognition_service = self.create_service(SpeechToText, recognizer_service_param, self.handle_recognition)
+        self.speech_recognition_service = self.create_service(SpeechToText, recognizer_service_param, self.handleRecognition)
 
         self.get_logger().info("Speech Recognizer is on!")
 
-    def handle_recognition(self, req: SpeechToText.Request, response: SpeechToText.Response):
+    def handleRecognition(self, req: SpeechToText.Request, response: SpeechToText.Response):
         with Microphone(sample_rate=self.sample_rate) as source:
             self.recognizer.adjust_for_ambient_noise(source, duration=self.noise_adjust_duration)
 

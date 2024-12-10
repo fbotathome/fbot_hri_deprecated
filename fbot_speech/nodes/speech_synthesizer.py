@@ -10,7 +10,7 @@ import warnings
 from scipy.io import wavfile
 from termcolor import colored
 from std_srvs.srv import SetBool
-from fbot_speech_msgs.srv import AudioPlayer, AudioPlayerByData, AudioPlayerByData_Request, SynthesizeSpeech, SynthesizeSpeech_Response, SynthesizeSpeech_Request
+from fbot_speech_msgs.srv import AudioPlayer, AudioPlayerByData, SynthesizeSpeech
 from fbot_speech_msgs.msg import SynthesizeSpeechMessage
 from audio_common_msgs.msg import AudioData, AudioInfo
 import rclpy
@@ -48,17 +48,20 @@ class SpeechSynthesizerNode(Node):
         auth = riva.client.Auth(uri=self.riva_url)
         self.riva_tts = riva.client.SpeechSynthesisService(auth)
 
+        # Fetch the audio player by data service parameter
+        self.audio_player_by_data_service_param = self.get_parameter_or("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data")
+
         # Subscribe to a topic for text input
         self.synthesizer_subscriber_param = self.get_parameter_or("subscribers/speech_synthesizer/topic", "/fbot_speech/ss/say_something")
-        self.create_subscription(SynthesizeSpeechMessage, self.synthesizer_subscriber_param, self.synthesize_speech_callback, 10)
+        self.create_subscription(SynthesizeSpeechMessage, self.synthesizer_subscriber_param, self.synthesizeSpeechCallback, 10)
 
         # Create the service for speech synthesis
         self.synthesizer_service_param = self.get_parameter_or("services/speech_synthesizer/service", "/fbot_speech/ss/say_something")
-        self.create_service(SynthesizeSpeech, self.synthesizer_service_param, self.synthesize_speech)
+        self.create_service(SynthesizeSpeech, self.synthesizer_service_param, self.synthesizeSpeech)
 
         self.get_logger().info("Speech Synthesizer Node initialized!")
 
-    def synthesize_speech(self, request: SynthesizeSpeech_Request, response: SynthesizeSpeech_Response):
+    def synthesizeSpeech(self, request: SynthesizeSpeech.Request, response: SynthesizeSpeech.Response):
         config = self.configs
         speech = request.text
         
@@ -78,25 +81,25 @@ class SpeechSynthesizerNode(Node):
 
             # Prepare the audio data to send to the audio player
             audio_data = AudioData()
-            audio_data.data = audio_samples.tobytes()
+            audio_data.uint8_data = audio_samples.tobytes()
             
             audio_info = AudioInfo()
-            audio_info.sample_rate = config["sample_rate_hz"]
+            audio_info.rate = config["sample_rate_hz"]
             audio_info.channels = 1
-            audio_info.sample_format = '16'
+            audio_info.format = 16
 
-            # Fetch the audio player by data service parameter
-            audio_player_by_data_service_param = self.get_parameter_or("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data")
-            audio_player_client = self.create_client(AudioPlayerByData, audio_player_by_data_service_param)
+            # Wait for the audio player service
+            self.get_logger().info(f"Calling audio player service: {self.audio_player_by_data_service_param}")
+            audio_player_client = self.create_client(AudioPlayerByData, self.audio_player_by_data_service_param)
             
             while not audio_player_client.wait_for_service(timeout_sec=1.0):
-                self.get_logger().info(f"Waiting for {audio_player_by_data_service_param} service...")
+                self.get_logger().info(f"Waiting for {self.audio_player_by_data_service_param} service...")
             
             # Create the request and send it
-            request = AudioPlayerByData_Request()
-            request.data = audio_data
-            request.audio_info = audio_info
-            future = audio_player_client.call_async(request)
+            audio_player_request = AudioPlayerByData.Request()
+            audio_player_request.data = audio_data
+            audio_player_request.audio_info = audio_info
+            future = audio_player_client.call_async(audio_player_request)
             future.result()
 
             response.success = True
@@ -108,11 +111,11 @@ class SpeechSynthesizerNode(Node):
         
         return response
 
-    def synthesize_speech_callback(self, msg: SynthesizeSpeechMessage):
-        request = SynthesizeSpeech_Request()
+    def synthesizeSpeechCallback(self, msg: SynthesizeSpeechMessage):
+        request = SynthesizeSpeech.Request()
         request.text = msg.text
         request.lang = msg.lang
-        self.synthesize_speech(request, SynthesizeSpeech_Response())
+        self.synthesizeSpeech(request, SynthesizeSpeech.Response())
 
 
 def main(args=None):

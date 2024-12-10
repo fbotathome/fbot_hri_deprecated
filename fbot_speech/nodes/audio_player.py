@@ -38,45 +38,45 @@ class AudioPlayerNode(Node):
         self.stream_timeout = self.get_parameter_or("stream_timeout", 10)
 
         # Create services
-        self.create_service(AudioPlayer, self.audio_player_service_param, self.to_talk)
-        self.create_service(AudioPlayerByData, self.audio_player_by_data_service_param, self.to_talk_by_data)
-        self.create_service(AudioStreamStart, self.audio_player_stream_start_service_param, self.audio_stream_start)
-        self.create_service(Empty, self.audio_player_stream_stop_service_param, self.stop_stream)
+        self.create_service(AudioPlayer, self.audio_player_service_param, self.toTalk)
+        self.create_service(AudioPlayerByData, self.audio_player_by_data_service_param, self.toTalkByData)
+        self.create_service(AudioStreamStart, self.audio_player_stream_start_service_param, self.audioStreamStart)
+        self.create_service(Empty, self.audio_player_stream_stop_service_param, self.stopStream)
 
         # Create subscriber
-        self.create_subscription(AudioData, self.audio_player_stream_data_topic_param, self.stream_data_callback, 10)
+        self.create_subscription(AudioData, self.audio_player_stream_data_topic_param, self.streamDataCallback, 10)
 
         # Timer to check for stream timeout
-        self.create_timer(1.0, self.check_stream_timeout)
+        self.create_timer(1.0, self.checkStreamTimeout)
 
         self.get_logger().info(colored("Audio Player is on!", "green"))
 
-    def to_talk(self, request, response):
+    def toTalk(self, request, response):
         if wm.streaming:
             response.success = False
             return response
 
         filepath = request.audio_path
-        wm.set_filepath(filepath)
-        wm.play_all_data()
+        wm.setFilepath(filepath)
+        wm.playAllData()
 
         response.success = True
         return response
         
-    def to_talk_by_data(self, request, response):
+    def toTalkByData(self, request, response):
         if wm.streaming:
             response.success = False
             return response
 
         data = request.data.uint8_data
         info = request.audio_info
-        wm.set_data_and_info(data, info)
-        wm.play_all_data()
+        wm.setDataAndInfo(data, info)
+        wm.playAllData()
 
         response.success = True
         return response
 
-    def audio_stream_start(self, request, response):
+    def audioStreamStart(self, request, response):
         global last_stream_data_timestamp
         if wm.streaming:
             response.success = False
@@ -85,16 +85,16 @@ class AudioPlayerNode(Node):
         last_stream_data_timestamp = self.get_clock().now()
 
         info = request.audio_info
-        wm.set_audio_info(info)
+        wm.setAudioInfo(info)
 
-        wm.start_stream()
+        wm.startStream()
 
         response.success = True
         return response
 
-    def stop_stream(self, request, response):
+    def stopStream(self, request, response):
         global last_stream_data_timestamp
-        wm.request_stop_stream()
+        wm.requestStopStream()
 
         last_stream_data_timestamp = None
 
@@ -104,20 +104,20 @@ class AudioPlayerNode(Node):
         response.success = True
         return response
 
-    def stream_data_callback(self, data):
+    def streamDataCallback(self, data):
         global last_stream_data_timestamp
         if wm.streaming:
             last_stream_data_timestamp = self.get_clock().now()
-            wm.stream_data_callback(data)
+            wm.streamDataCallback(data)
 
-    def check_stream_timeout(self):
+    def checkStreamTimeout(self):
         global last_stream_data_timestamp
         if wm.streaming:
             if last_stream_data_timestamp is not None:
                 now = self.get_clock().now()
                 if now - last_stream_data_timestamp >= rclpy.duration.Duration(seconds=self.stream_timeout):
                     self.get_logger().info('STREAM TIMEOUT')
-                    wm.request_stop_stream()
+                    wm.requestStopStream()
                     last_stream_data_timestamp = None
 
 

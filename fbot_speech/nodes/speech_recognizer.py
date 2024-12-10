@@ -42,18 +42,18 @@ class SpeechRecognizerNode(Node):
 
         # Setup the service
         recognizer_service_param = self.get_parameter_or("services/speech_recognizer/service", "/fbot_speech/sr/speech_recognizer")
-        self.speech_recognition_service = self.create_service(SpeechToText, recognizer_service_param, self.handle_recognition)
+        self.speech_recognition_service = self.create_service(SpeechToText, recognizer_service_param, self.handleRecognition)
 
         # Global recorder variable
         self.recorder =  AudioToTextRecorder(**self.configs)
 
         self.get_logger().info("Speech Recognizer is on!")
 
-    def delay_starter_recorder(self):
+    def delayStarterRecorder(self):
         time.sleep(0.5)
         playsound(TALK_AUDIO)
 
-    def handle_recognition(self, req: SpeechToText.Request, response: SpeechToText.Response):
+    def handleRecognition(self, req: SpeechToText.Request, response: SpeechToText.Response):
         self.get_logger().info("Handling recognition request...")
 
         # Variable to store the start time of VAD detection
@@ -75,7 +75,7 @@ class SpeechRecognizerNode(Node):
         vad_thread.start()
 
         # Start delayed starter recorder thread
-        thread1 = threading.Thread(target=self.delay_starter_recorder)
+        thread1 = threading.Thread(target=self.delayStarterRecorder)
         thread1.start()
 
         # Get recognized text
