@@ -1,4 +1,4 @@
-ros_node:
+/**:
   ros__parameters:
     publishers:
       fbot_hotword_detection:

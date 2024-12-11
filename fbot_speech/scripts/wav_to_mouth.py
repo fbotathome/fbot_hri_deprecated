@@ -10,8 +10,8 @@ import sounddevice as sd
 from std_msgs.msg import Int16MultiArray, Int16
 from threading import Lock, Event
 
-fbot_SPEECH_PKG = rospkg.RosPack().get_path("fbot_speech")
-AUDIO = os.path.join(fbot_SPEECH_PKG, "audios/")
+#fbot_SPEECH_PKG = rospkg.RosPack().get_path("fbot_speech")
+#AUDIO = os.path.join(fbot_SPEECH_PKG, "audios/")
 
 def mapRange(x, in_min, in_max, out_min, out_max):
     return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
