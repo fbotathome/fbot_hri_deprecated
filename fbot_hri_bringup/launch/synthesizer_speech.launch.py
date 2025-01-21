@@ -9,19 +9,19 @@ def generate_launch_description():
 
     ros_config_file_arg = DeclareLaunchArgument(
         'ros_config',
-        default_value=PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', 'ros.yaml']),
+        default_value=PathJoinSubstitution([FindPackageShareRemote(remote_install_space='/home/jetson/jetson_ws/install', package='fbot_hri_bringup'), 'config', 'ros.yaml']),
         description='Path to the ros parameter file'
     )
 
     tts_config_file_arg = DeclareLaunchArgument(
         'tts_config',
-        default_value=PathJoinSubstitution([FindPackageShareRemote(remote_install_space='/home/dudu/fbot_ws/install', package='fbot_hri_bringup'), 'config', 'fbot_speech_synthesizer.yaml']),
+        default_value=PathJoinSubstitution([FindPackageShareRemote(remote_install_space='/home/jetson/jetson_ws/install', package='fbot_hri_bringup'), 'config', 'fbot_speech_synthesizer.yaml']),
         description='Path to the tts parameter file'
     )
 
     audio_config_file_arg = DeclareLaunchArgument(
         'audio_config',
-        default_value=PathJoinSubstitution([FindPackageShareRemote(remote_install_space='/home/dudu/fbot_ws/install', package='fbot_hri_bringup'), 'config', 'fbot_audio_player.yaml']),
+        default_value=PathJoinSubstitution([FindPackageShareRemote(remote_install_space='/home/jetson/jetson_ws/install', package='fbot_hri_bringup'), 'config', 'fbot_audio_player.yaml']),
         description='Path to the audio_player parameter file'
     )
 
@@ -36,15 +36,15 @@ def generate_launch_description():
 
     speech_synthesizer_node = NodeRemoteSSH(
         name='speech_synthesizer_node',
-        user='dudu',
-        machine='192.168.1.100',
+        user='jetson',
+        machine='jetson',
         package='fbot_speech', 
         executable='speech_synthesizer',
         parameters=[LaunchConfiguration('ros_config'),
                     LaunchConfiguration('tts_config')
                     ],
         source_paths=[
-                '/home/dudu/fbot_ws/install/setup.bash',
+                '/home/jetson/jetson_ws/install/setup.bash',
                 ],
     )
 
