@@ -3,7 +3,6 @@
 import os
 import numpy as np
 import riva.client
-import rospy
 import rospkg
 import warnings
 
@@ -16,18 +15,12 @@ from audio_common_msgs.msg import AudioData, AudioInfo
 import rclpy
 from rclpy.node import Node
 
-# Fetch the warning parameter from ROS parameters
-warning = rospy.get_param("warnings", False)
-if not warning:
-    # Suppress warnings if the parameter is set to False
-    warnings.filterwarnings("ignore")
-
 # Get the path of the 'fbot_speech' package
-PACK_DIR = rospkg.RosPack().get_path("fbot_speech")
+#PACK_DIR = rospkg.RosPack().get_path("fbot_speech")
 # Construct the path to the audio directory
-AUDIO_DIR = os.path.join(PACK_DIR, "audios/")
+#AUDIO_DIR = os.path.join(PACK_DIR, "audios/")
 # Set the filename for the generated audio file
-FILENAME = str(AUDIO_DIR) + "talk.wav"
+#FILENAME = str(AUDIO_DIR) + "talk.wav"
 
 class SpeechSynthesizerNode(Node):
     def __init__(self):
