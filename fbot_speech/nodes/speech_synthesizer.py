@@ -2,7 +2,6 @@
 # coding: utf-8
 import os
 import numpy as np
-import riva.client
 import rospkg
 import warnings
 import requests
