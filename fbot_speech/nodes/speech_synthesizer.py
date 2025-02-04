@@ -5,6 +5,7 @@ import numpy as np
 import riva.client
 import rospkg
 import warnings
+import requests
 
 from scipy.io import wavfile
 from termcolor import colored
@@ -30,16 +31,11 @@ class SpeechSynthesizerNode(Node):
         
         # Parameters
         self.config_defaults = {
-            "language_code": "en-US",
-            "sample_rate_hz": 44100,
-            "voice_name": "English-US.Male-1",
+            "sample_rate_hz": 22050,
         }
         
         self.configs = self.get_parameter_or("tts_configs", self.config_defaults)
         
-        self.riva_url = self.get_parameter_or("riva/url", "localhost:50051")
-        auth = riva.client.Auth(uri=self.riva_url)
-        self.riva_tts = riva.client.SpeechSynthesisService(auth)
 
         # Fetch the audio player by data service parameter
         self.audio_player_by_data_service_param = self.get_parameter_or("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data")
@@ -53,24 +49,43 @@ class SpeechSynthesizerNode(Node):
         self.create_service(SynthesizeSpeech, self.synthesizer_service_param, self.synthesizeSpeech)
 
         self.get_logger().info("Speech Synthesizer Node initialized!")
+    
+    def fetch_synthesized_speech(self, text, port=5001):
+        url = f'http://localhost:{port}'
+        params = {'text': text}
+        response = requests.get(url, params=params, stream=True)
+        
+        if response.status_code == 200:
+            audio_data = b""
+            for chunk in response.iter_content(chunk_size=8192):
+                audio_data += chunk
+            return audio_data
+        else:
+            rospy.logerr(f"Failed to fetch synthesized speech: {response.status_code}")
+            return None
+        
 
     def synthesizeSpeech(self, request: SynthesizeSpeech.Request, response: SynthesizeSpeech.Response):
         config = self.configs
         speech = request.text
         
         try:
-            # Call Riva TTS to synthesize the speech
-            resp = self.riva_tts.synthesize(
-                custom_dictionary=config, 
-                text=speech,
-                voice_name=config["voice_name"], 
-                sample_rate_hz=config["sample_rate_hz"],
-                language_code=config["language_code"],
-                encoding=riva.client.AudioEncoding.LINEAR_PCM,
-            )
-            
-            # Convert the response audio to a NumPy array
-            audio_samples = np.frombuffer(resp.audio, dtype=np.int16)
+            if lang == "pt": # Portuguese
+                # Fetch the synthesized speech from the external service
+                audio_data_bytes = self.fetch_synthesized_speech(speech, port=5002)
+                if audio_data_bytes is None:
+                    response = SynthesizeSpeechResponse()
+                    response.success = False
+                    return response
+                audio_samples = np.frombuffer(audio_data_bytes, dtype=np.int16)
+            else: # English
+                # Fetch the synthesized speech from the external service
+                audio_data_bytes = self.fetch_synthesized_speech(speech, port=5001)
+                if audio_data_bytes is None:
+                    response = SynthesizeSpeechResponse()
+                    response.success = False
+                    return response
+                audio_samples = np.frombuffer(audio_data_bytes, dtype=np.int16)
 
             # Prepare the audio data to send to the audio player
             audio_data = AudioData()
