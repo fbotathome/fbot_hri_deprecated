@@ -1,6 +1,8 @@
 from setuptools import find_packages, setup
+import os
+import glob
 
-package_name = 'fbot_face'
+package_name = 'fbot_head'
 
 setup(
     name=package_name,
@@ -10,6 +12,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name), glob.glob('launch/*.launch.py')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -20,6 +23,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'my_node = fbot_head.my_node:main',
+            'emotions_bridge = fbot_head.emotions_bridge.emotions_bridge:main',
+            'emotions_publisher = fbot_head.emotions_publisher:main'
         ],
     },
 )
