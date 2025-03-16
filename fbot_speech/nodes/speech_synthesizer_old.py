@@ -19,7 +19,7 @@ from espnet2.bin.tts_inference import Text2Speech
 from espnet2.utils.types import str_or_none
 
 
-MODEL_DIR = os.path.join(rospkg.RosPack().get_path("fbot_speech"), "include/model/total_count/")
+MODEL_DIR = ("/home/luisffee/fbot_ws/src/fbot_hri/fbot_speech/include/model/total_count/")
 MODEL_NAME = "model.pkl"
 MODEL_PATH = os.path.join(MODEL_DIR, MODEL_NAME)
 AUDIO_DIR = ("./audios")
@@ -110,10 +110,11 @@ class SpeechSynthesizerNode(Node):
         return response
 
     def synthesizeSpeechCallback(self, msg: SynthesizeSpeechMessage):
-        request = SynthesizeSpeech()
-        request.text = msg.text
-        request.lang = msg.lang
-        self.synthesizeSpeech(request, SynthesizeSpeech())
+            request = SynthesizeSpeech.Request()
+            request.text = msg.text
+            request.lang = msg.lang
+            response = SynthesizeSpeech.Response()
+            self.synthesizeSpeech(request, response)
 
 def main(args=None):
     rclpy.init(args=args)
