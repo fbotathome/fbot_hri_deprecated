@@ -2,7 +2,7 @@ emotions_bridge:
   ros__parameters:
 
       eyebrow_left_vert:
-        pin: 3
+        pin: 2
         start_angle: 10
         final_angle: 150
         type: 'percentual'
@@ -32,7 +32,7 @@ emotions_bridge:
 
 
       eyebrow_left_rot:
-        pin: 6
+        pin: 5
         start_angle: 80
         final_angle: 180
         type: 'rawangle'
@@ -47,7 +47,7 @@ emotions_bridge:
 
 
       eyebrow_right_rot:
-        pin: 5
+        pin: 12
         start_angle: 110
         final_angle: 180
         type: 'rawangle'
@@ -62,7 +62,7 @@ emotions_bridge:
 
 
       eyelid_left: 
-        pin: 10
+        pin: 13
         start_angle: 10
         final_angle: 100
         type: 'percentual'
@@ -77,7 +77,7 @@ emotions_bridge:
 
 
       eyelid_right:
-        pin: 8
+        pin: 14
         start_angle: 0
         final_angle: 100
         type: 'percentual'
@@ -92,7 +92,7 @@ emotions_bridge:
 
 
       eyes_ver: 
-        pin: 7
+        pin: 15
         start_angle: 80
         final_angle: 125
         type: 'percentual'
@@ -107,7 +107,7 @@ emotions_bridge:
 
 
       eyes_hor:
-        pin: 2
+        pin: 16
         start_angle: 0
         final_angle: 120
         type: 'percentual'
@@ -122,7 +122,7 @@ emotions_bridge:
 
 
       jaw_right: 
-        pin: 12
+        pin: 17
         start_angle: 108
         final_angle: 126
         type: 'percentual'
@@ -137,7 +137,7 @@ emotions_bridge:
 
 
       jaw_left: 
-        pin: 12
+        pin: 18
         start_angle: 108
         final_angle: 126
         type: 'percentual'
