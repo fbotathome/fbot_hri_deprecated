@@ -2,25 +2,56 @@
 #include <ArduinoJson.h>
 #include <ESP32Servo.h>
 #include <map>
+#include <Preferences.h>
 
-// put function declarations here:
-int myFunction(int, int);
-std::map<String, Servo> create_motors();
 
-std::map<String, Servo> motors_dict;
+//functions declarations
+std::map<String, Servo> configureMotors(JsonObject motors_config);
+
+int getCommand(JsonObject doc);
+
+JsonDocument stringToJsonObject(String str);
+
+String write_to_motors(JsonObject motors_angles);
+
+
+
+
+//global variables
+std::map<String, Servo> motors;
+
+enum commands : int {
+  ERROR, CONFIG, WRITE_ANGLES
+};
+
+Preferences preferences;
+
+
+
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
 
-  std::map<String, Servo> motors = create_motors();
+  preferences.begin("storage", false);
+  
+  // String stored_config = preferences.getString("json_config", "");
 
-  // Testar movimentação dos motores
-  for (auto& pair : motors) { // Removido o 'const'
-    Serial.print("Movendo motor: ");
-    Serial.println(pair.first); // Nome do motor
-    pair.second.write(90);      // Mover o motor para 90 graus
-}
+  // if(!stored_config.isEmpty()){
+
+  //   Serial.println(stored_config);
+
+  //   JsonDocument json_doc = stringToJsonObject(stored_config);
+  //   JsonObject json_obj = json_doc.as<JsonObject>();
+  //   int cmd = getCommand(json_obj);
+  //   if (cmd = 1){
+  //     motors = configureMotors(json_obj);
+  //     String response = "{\"response\": \"success\"}";
+  //     Serial.print(response);
+
+  //   }
+
+  // }
 
 }
 
@@ -29,73 +60,142 @@ void loop() {
   
   if (Serial.available()==1){ //FAZER CHAVE VALOR COM COMANDO NO JSON PARA QUANDO FOR CONFIGURAÇÃO E QUANDO FOR ESCRITA DE VALORES!!!
 
-    Serial.print("available: \n");
-    Serial.print(Serial.readString());
+    //Serial.print("LOOP!!");
+    String string_json = Serial.readString();
+
+    JsonDocument json_doc = stringToJsonObject(string_json);
+
+    JsonObject json_obj = json_doc.as<JsonObject>();
+
+    int cmd = getCommand(json_obj);
+
+    String response;
+
+    //Serial.print("command = ");
+    //Serial.print(cmd);
+
+    switch (cmd)
+    {
+    case ERROR: //Command not found or Json not structured correctly
+      response = "{\"response\": \"error\"}";
+      
+      break;
+    
+    case CONFIG: //Command for instanciating motors
+
+      preferences.putString("json_config", string_json);
+
+      for (auto& pair : motors) {
+        delete &pair.second; // Libera a memória do objeto Servo
+      }
+
+      motors.clear(); // Clear the existing motors map
+      
+      motors = configureMotors(json_obj);
+
+      response = "{\"response\": \"success\"}";
+      
+      break;
+
+    case WRITE_ANGLES:
+
+      //Serial.println(cmd);
+      //Serial.println(WRITE_ANGLES);
+
+      response = write_to_motors(json_obj);
+      
+      break;
+
+    default:
+
+      response = "{\"response\": \"command not found\"}";
+
+      break;
+    }
+
+    Serial.print(response);
+
+
   }
 }
 
-std::map<String, Servo> create_motors() {
+int getCommand(JsonObject doc){
 
-  JsonDocument motors_config;
-
-  int configured = 0;
-
-  int motors_num = 0;
-
-  while (!configured) {
-    if (Serial.available()) {
-      Serial.println("available: \n");
-
-      String input = Serial.readString();
-
-      Serial.println(input);
-      Serial.println("");
-
-      DeserializationError error = deserializeJson(motors_config, input);
-
-      if (error) {
-        Serial.print("Erro ao desserializar JSON: ");
-        Serial.println(error.c_str());
-      } else {
-        Serial.println("JSON desserializado com sucesso!");
-
-        motors_num = motors_config.size();
-
-        configured=1;
-
-      }
-    }
+  if (doc.isNull()) {
+    //Serial.println("JsonObject é nulo!");
+    return ERROR; // Retorna um valor de erro
   }
 
-  Servo motor[motors_num];
+  int command_value = 0;
 
-  int index=0;
-  // Iterar sobre as chaves e valores do JSON
-  for (JsonPair key_value : motors_config.as<JsonObject>()) {
+  if(doc["cmd"].is<JsonVariant>()){
+    command_value = doc["cmd"].as<int>();
+  }
+
+  //Serial.println(command_value);
+  doc.remove("cmd");
+  return command_value;
+
+}
+
+JsonDocument stringToJsonObject(String str){
+
+  JsonDocument doc;
+
+  DeserializationError error = deserializeJson(doc, str);
+
+  if (error) {
+    //Serial.print("Erro ao desserializar JSON: ");
+    //Serial.println(error.c_str());
     
-    const char* motor_name = key_value.key().c_str(); // Nome da chave no JSON
-    int motor_pin = key_value.value().as<int>();    // Valor associado (pino do motor)
+  } else {
+    //Serial.println("JSON desserializado com sucesso!");
+  }
 
+  return doc;
 
-    Serial.print("Chave: ");
-    Serial.print(key_value.key().c_str());
+}
 
-    motor[index].attach(motor_pin);
+std::map<String, Servo> configureMotors(JsonObject motors_config) {
+  std::map<String, Servo> motors_dict;
 
-    motors_dict[motor_name] = motor[index];
+  for (JsonPair key_value : motors_config) {
+    const char* motor_name = key_value.key().c_str();
+    int motor_pin = key_value.value().as<int>();
 
-    Serial.print(" | Valor: ");
-    Serial.println(key_value.value().as<String>());
+    Servo* motor = new Servo(); // Aloca dinamicamente o objeto Servo
+    motor->attach(motor_pin);
 
-    index++;
+    motors_dict[motor_name] = *motor; // Armazena o objeto no mapa
   }
 
   return motors_dict;
-
 }
 
+String write_to_motors(JsonObject motors_angles) { // Testar movimentação dos motores
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  for (JsonPair key_value : motors_angles) {
+
+    String motor_name = key_value.key().c_str(); 
+    int motor_angle = key_value.value().as<int>();   
+
+    Servo motor = motors[motor_name];
+
+    if (!motor.attached()) {
+      //Serial.print("Erro: Motor ");
+      //Serial.print(motor_name);
+      //Serial.println(" não está anexado a nenhum pino.");
+      return "{\"response\": \"error\", \"message\": \"Motor not attached: " + motor_name + "\"}";
+    }
+
+    //Serial.print("Movendo motor: ");
+    //Serial.println(motor_name);
+    //Serial.print("Angulo: ");
+    //Serial.println(motor_angle);
+
+    motor.write(motor_angle);
+  }
+
+  //Serial.println("Todos os motores foram movidos com sucesso.");
+  return "{\"response\": \"success\", \"message\": \"Motors moved successfully\"}";
 }
