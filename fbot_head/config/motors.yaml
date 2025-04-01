@@ -1,0 +1,151 @@
+emotions_bridge:
+  ros__parameters:
+
+      eyebrow_left_vert:
+        pin: 2
+        start_angle: 10
+        final_angle: 150
+        type: 'percentual'
+
+        neutral: 65
+        happy: 22
+        sad: 105
+        surprised: 15
+        angry: 95
+        suspicious: 115
+        sleepy: 80
+
+
+      eyebrow_right_vert: 
+        pin: 4
+        start_angle: 30
+        final_angle: 150
+        type: 'percentual'
+
+        neutral: 12
+        happy: 120
+        sad: 80
+        surprised: 155
+        angry: 90
+        suspicious: 155
+        sleepy: 70
+
+
+      eyebrow_left_rot:
+        pin: 5
+        start_angle: 80
+        final_angle: 180
+        type: 'rawangle'
+    
+        neutral: 120
+        happy: 120
+        sad: 10
+        surprised: 130
+        angry: 100
+        suspicious: 120
+        sleepy: 125
+
+
+      eyebrow_right_rot:
+        pin: 12
+        start_angle: 110
+        final_angle: 180
+        type: 'rawangle'
+
+        neutral: 50
+        happy: 43
+        sad: 170
+        surprised: 35
+        angry: 75
+        suspicious: 80
+        sleepy: 35
+
+
+      eyelid_left: 
+        pin: 13
+        start_angle: 10
+        final_angle: 100
+        type: 'percentual'
+
+        neutral: 92
+        happy: 112
+        sad: 105
+        surprised: 125
+        angry: 110
+        suspicious: 100
+        sleepy: 100
+
+
+      eyelid_right:
+        pin: 14
+        start_angle: 0
+        final_angle: 100
+        type: 'percentual'
+
+        neutral: 87
+        happy: 75
+        sad: 78
+        surprised: 60
+        angry: 75
+        suspicious: 90
+        sleepy: 100
+
+
+      eyes_ver: 
+        pin: 15
+        start_angle: 80
+        final_angle: 125
+        type: 'percentual'
+
+        neutral: 65
+        happy: 95
+        sad: 95
+        surprised: 95 
+        angry: 95
+        suspicious: 95
+        sleepy: 95
+
+
+      eyes_hor:
+        pin: 16
+        start_angle: 0
+        final_angle: 120
+        type: 'percentual'
+
+        neutral: 43
+        happy: 140
+        sad: 120
+        surprised: 140
+        angry: 140
+        suspicious: 130
+        sleepy: 125
+
+
+      jaw_right: 
+        pin: 17
+        start_angle: 108
+        final_angle: 126
+        type: 'percentual'
+
+        neutral: 108
+        happy: 108
+        sad: 108
+        surprised: 108
+        angry: 108
+        suspicious: 108
+        sleepy: 108
+
+
+      jaw_left: 
+        pin: 18
+        start_angle: 108
+        final_angle: 126
+        type: 'percentual'
+        
+        neutral: 108
+        happy: 108
+        sad: 108
+        surprised: 108
+        angry: 108
+        suspicious: 108
+        sleepy: 108

@@ -1,0 +1,96 @@
+fbot_head:
+
+  ros__parameters:
+
+    emotions_config:
+
+      neutral:
+        eyebrow_left_vert:
+        eyebrow_right_vert:
+        eyebrow_left_rot:
+        eyebrow_left_rot:
+        eyelid_left: 
+        eyelid_right:
+        eyes_ver: 
+        eyes_hor:
+        jaw_right: 
+        jaw_left: 
+
+      happy:
+        eyebrow_left_vert:
+        eyebrow_right_vert:
+        eyebrow_left_rot:
+        eyebrow_left_rot:
+        eyelid_left: 
+        eyelid_right:
+        eyes_ver: 
+        eyes_hor:
+        jaw_right: 
+        jaw_left: 
+
+      sad:
+        eyebrow_left_vert:
+        eyebrow_right_vert:
+        eyebrow_left_rot:
+        eyebrow_left_rot:
+        eyelid_left: 
+        eyelid_right:
+        eyes_ver: 
+        eyes_hor:
+        jaw_right: 
+        jaw_left: 
+
+      surprised:
+        eyebrow_left_vert:
+        eyebrow_right_vert:
+        eyebrow_left_rot:
+        eyebrow_left_rot:
+        eyelid_left: 
+        eyelid_right:
+        eyes_ver: 
+        eyes_hor:
+        jaw_right: 
+        jaw_left: 
+
+
+      angry:
+        eyebrow_left_vert:
+        eyebrow_right_vert:
+        eyebrow_left_rot:
+        eyebrow_left_rot:
+        eyelid_left: 
+        eyelid_right:
+        eyes_ver: 
+        eyes_hor:
+        jaw_right: 
+        jaw_left: 
+
+
+      suspicious:
+        eyebrow_left_vert:
+        eyebrow_right_vert:
+        eyebrow_left_rot:
+        eyebrow_left_rot:
+        eyelid_left: 
+        eyelid_right:
+        eyes_ver: 
+        eyes_hor:
+        jaw_right: 
+        jaw_left: 
+
+
+      sleepy:
+        eyebrow_left_vert:
+        eyebrow_right_vert:
+        eyebrow_left_rot:
+        eyebrow_left_rot:
+        eyelid_left: 
+        eyelid_right:
+        eyes_ver: 
+        eyes_hor:
+        jaw_right: 
+        jaw_left: 
+
+
+
+      
