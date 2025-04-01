@@ -35,23 +35,21 @@ void setup() {
 
   preferences.begin("storage", false);
   
-  // String stored_config = preferences.getString("json_config", "");
+  String stored_config = preferences.getString("json_config", "");
 
-  // if(!stored_config.isEmpty()){
+  if(!stored_config.isEmpty()){
 
-  //   Serial.println(stored_config);
+    Serial.println(stored_config);
 
-  //   JsonDocument json_doc = stringToJsonObject(stored_config);
-  //   JsonObject json_obj = json_doc.as<JsonObject>();
-  //   int cmd = getCommand(json_obj);
-  //   if (cmd = 1){
-  //     motors = configureMotors(json_obj);
-  //     String response = "{\"response\": \"success\"}";
-  //     Serial.print(response);
+    motors.clear(); // Clear the existing motors map
 
-  //   }
+    JsonDocument json_doc = stringToJsonObject(stored_config);
 
-  // }
+    JsonObject json_obj = json_doc.as<JsonObject>();
+      
+    motors = configureMotors(json_obj);
+
+  }
 
 }
 
@@ -158,6 +156,10 @@ JsonDocument stringToJsonObject(String str){
 
 std::map<String, Servo> configureMotors(JsonObject motors_config) {
   std::map<String, Servo> motors_dict;
+
+  if(motors_config["cmd"].is<JsonVariant>()){
+    motors_config.remove("cmd");
+  }
 
   for (JsonPair key_value : motors_config) {
     const char* motor_name = key_value.key().c_str();
