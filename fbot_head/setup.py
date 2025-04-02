@@ -26,7 +26,8 @@ setup(
         'console_scripts': [
             'my_node = fbot_head.my_node:main',
             'emotions_bridge = fbot_head.emotions_bridge.emotions_bridge:main',
-            'emotions_publisher = fbot_head.emotions_publisher:main'
+            'emotions_publisher = fbot_head.emotions_publisher:main',
+            'neck_controller = fbot_head.neck_controller.neck_controller:main'
         ],
     },
 )

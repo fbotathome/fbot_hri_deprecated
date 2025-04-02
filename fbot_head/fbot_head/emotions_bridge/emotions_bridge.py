@@ -19,16 +19,16 @@ class EmotionsBridge(Node):
 
         self.motors = None
         #CARREGAR PARÂMETROS DO YAML    
-        self.load_motors_params('motors.yaml')
+        self.loadMotorsParams('motors.yaml')
 
-        self.send_motors_config()
+        self.sendMotorsConfig()
         
         self.current_emotion = 'neutral'
-        self.send_emotion(self.current_emotion)
+        self.sendEmotion(self.current_emotion)
 
-        self.sub_emotion = self.create_subscription(String, 'fbot_face/emotion', self.emotion_callback, 10)
+        self.sub_emotion = self.create_subscription(String, 'fbot_face/emotion', self.emotionCallback, 10)
         
-    def send_motors_config(self):
+    def sendMotorsConfig(self):
 
         max_retries = 3
         retries = 0
@@ -56,7 +56,7 @@ class EmotionsBridge(Node):
                 success = True
             else:
                 retries+=1
-                self.get_logger().info("send_motors_config() failed: trying again ("+str(max_retries-retries)+" left)")
+                self.get_logger().info("sendMotorsConfig() failed: trying again ("+str(max_retries-retries)+" left)")
 
 
     def waitSerialResponse(self, response_msg):
@@ -87,13 +87,13 @@ class EmotionsBridge(Node):
 
 
 
-    def emotion_callback(self, msg):
+    def emotionCallback(self, msg):
 
         self.get_logger().info('Emotion received! ')
         self.current_emotion = msg.data
-        self.send_emotion(self.current_emotion)
+        self.sendEmotion(self.current_emotion)
 
-    def send_emotion(self, emotion):
+    def sendEmotion(self, emotion):
         
         log_message = ''
 
@@ -127,7 +127,7 @@ class EmotionsBridge(Node):
         return
 
 
-    def load_motors_params(self, filename):
+    def loadMotorsParams(self, filename):
 
         with open(os.path.join(get_package_share_directory('fbot_head'), 'config', filename)) as config_file:
             config = yaml.safe_load(config_file)[self.get_name()]['ros__parameters']
