@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import String
+from std_msgs.msg import String, Float64MultiArray
 
 
 class EmotionsPublisher(Node):
@@ -9,6 +9,7 @@ class EmotionsPublisher(Node):
     def __init__(self):
         super().__init__('emotions_publisher')
         self.publisher_ = self.create_publisher(String, 'fbot_face/emotion', 10)
+        self.publisher_neck = self.create_publisher(Float64MultiArray, '/updateNeck', 10)
         timer_period = 5  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
         self.i = 0
@@ -19,6 +20,7 @@ class EmotionsPublisher(Node):
         msg = String()
         msg.data = self.emotions[self.i]
         self.publisher_.publish(msg)
+        self.publisher_neck.publish(Float64MultiArray(data=[200.0-(self.i*5), 180.0]))
         self.get_logger().info('Publishing: "%s"' % msg.data)
         self.i = self.i+1 if self.i<6 else 0
 

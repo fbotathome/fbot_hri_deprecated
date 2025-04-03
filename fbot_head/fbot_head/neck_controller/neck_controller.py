@@ -25,13 +25,13 @@ class NeckController(Node):
         self.motors_id = {
             'horizontal_neck_joint':{
                 'current_angle': np.pi,
-                'id': 61,
+                'id': 62,
                 'min_angle': 120,
                 'max_angle': 240
             },
             'vertical_neck_joint':{
                 'current_angle': np.pi,
-                'id': 62,
+                'id': 61,
                 'min_angle': 150,
                 'max_angle': 190
             },
@@ -52,6 +52,8 @@ class NeckController(Node):
 
     def updateNeck(self, msg):
 
+        # print(msg.data)
+
         if self.pause:
             return
 
@@ -62,7 +64,7 @@ class NeckController(Node):
 
         self.motors['horizontal_neck_joint'].sendGoalAngle(pos_horizontal)
 
-        self.motors_id['vertical_neck_joint'].sendGoalAngle(pos_vertical)
+        self.motors['vertical_neck_joint'].sendGoalAngle(pos_vertical)
 
         self.motors['head_pan_joint'].sendGoalAngle(pos_horizontal)
 
@@ -72,9 +74,15 @@ class NeckController(Node):
         self.pause = not msg.data
 
     def setupMotors(self):
+        
+        # self.neck_comm = DxlCommProtocol2("/dev/ttyUSB1")
+
+        # self.motortest = JointProtocol2(62)
+        # self.neck_comm.attachJoint(self.motortest)
+        # self.motortest.enableTorque()
 
         try:
-            self.neck_comm = DxlCommProtocol2("/dev/ttyNECK")
+            self.neck_comm = DxlCommProtocol2("/dev/ttyUSB1")
 
             for motor_name, props in self.motors_id.items():
                 
@@ -86,8 +94,12 @@ class NeckController(Node):
 
                 self.motors[motor_name].setVelocityLimit(self.vel_limit)
 
+                print(f"Motor {motor_name} with id {self.motors[motor_name].servo_id} attached")
+
         except Exception as e:
-            print("Neck port failed to connect.")
+            print(e)
+
+        print('Motors configured successfully')
         
 
         
