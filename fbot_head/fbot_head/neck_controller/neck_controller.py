@@ -4,9 +4,9 @@ from rclpy.duration import Duration
 from std_msgs.msg import String, Bool, Float64MultiArray
 from geometry_msgs.msg import PoseStamped, PointStamped
 from sensor_msgs.msg import JointState
-from std_srvs.srv import Empty, EmptyResponse
+from std_srvs.srv import Empty
 
-from fbot_vision_msgs.srv import LookAtDescription3D, LookAtDescription3DRequest, LookAtDescription3DResponse
+from fbot_vision_msgs.srv import LookAtDescription3D
 from fbot_vision_msgs.msg import Detection3DArray, Detection3D
 
 from .PyDynamixel import DxlCommProtocol1, DxlCommProtocol2, JointProtocol1, JointProtocol2
@@ -27,14 +27,14 @@ class NeckController(Node):
         self.pause = False
         self.lock_updateNeck = False
 
-        self.sub_emergency_button = self.create_subscription(Bool, 'emergency_button', self.emergencyButtonCallback)
-        self.sub_update_neck = self.create_subscription(Float64MultiArray, "updateNeck", self.updateNeckCallback, queue_size=10)
-        self.sub_update_neck_by_point = self.create_subscription(PointStamped, "updateNeckByPoint", self.updateNeckByPointCallback, queue_size=10)
+        self.sub_emergency_button = self.create_subscription(Bool, 'emergency_button', self.emergencyButtonCallback, 10)
+        self.sub_update_neck = self.create_subscription(Float64MultiArray, "updateNeck", self.updateNeckCallback, 10)
+        self.sub_update_neck_by_point = self.create_subscription(PointStamped, "updateNeckByPoint", self.updateNeckByPointCallback, 10)
 
         self.vel_limit = 800
 
         self.tf_buffer = tf2_ros.Buffer()
-        self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self.node)
+        self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
         self.neck_updated = None
 
         self.joints_dict = {    ## PRECISA DOS DOIS ULTIMOS ITENS? POIS SAO SEMPRE ZERO
@@ -44,7 +44,7 @@ class NeckController(Node):
             'head_tilt_joint':       (0., 0., 0.)
         }
 
-        self.pub_joint_states = self.create_publisher(JointState, 'boris_head/joint_states', queue_size=10)
+        self.pub_joint_states = self.create_publisher(JointState, 'boris_head/joint_states', 10)
         self.seq = 0
 
         self.srv_start_lookat = self.create_service(LookAtDescription3D, 'lookat_start', self.lookAtStart)
@@ -87,9 +87,8 @@ class NeckController(Node):
 
         self.setupMotors()
 
-        self.initial_angle = Float64MultiArray()
-        self.initial_angle.data = [180, 180]
-        self.updateNeckByAngles(self.initial_angle)
+        self.initial_angle = [180.0, 180.0]
+        self.updateNeck(self.initial_angle)
 
     def setupMotors(self):
         
@@ -121,18 +120,20 @@ class NeckController(Node):
         self.pause = not msg.data
 
     def updateNeckCallback(self, msg): 
+        self.get_logger().info("message received in /updateNeck")
         data = msg.data
-        self.updateNeck(data=None, from_updateNeckCallback=True)
+        self.updateNeck(list(data), from_updateNeckCallback=True)
 
     def updateNeckByPointCallback(self, msg):
 
         transform = self.computeTFTransform(msg.header)
         ps = tf2_geometry_msgs.do_transform_point(msg, transform).point
-        angle_msg = Float64MultiArray()
-        angle_msg.data = self.computeNeckStateByPoint(ps)
+        angle_msg = self.computeNeckStateByPoint(ps)
         self.updateNeck(angle_msg, from_updateNeckCallback=True)
 
     def updateNeck(self, data:list[float], from_updateNeckCallback = False):
+        
+        self.get_logger().info("updating neck angles with data: "+str(data))
 
         if data:
             pos_horizontal = np.radians(min(self.motors_config['horizontal_neck_joint']['max_angle'], max(self.motors_config['horizontal_neck_joint']['min_angle'], data[0])))
@@ -140,7 +141,7 @@ class NeckController(Node):
 
             self.motors_config['horizontal_neck_joint']['current_angle']=pos_horizontal
             self.motors_config['vertical_neck_joint']['current_angle']=pos_vertical
-            self.motors_config['head_pan_joint']['current_angle']=pos_vertical
+            self.motors_config['head_pan_joint']['current_angle']=pos_horizontal
             self.motors_config['head_tilt_joint']['current_angle']=2*np.pi - pos_vertical
 
         if self.pause:
@@ -159,7 +160,7 @@ class NeckController(Node):
         msg = JointState()
 
         # Nome da joint no URDF do Kinect
-        msg.header.seq = self.seq
+        # msg.header.seq = self.seq
         msg.header.stamp = self.get_clock().now().to_msg()
         
         msg.name = []
@@ -214,9 +215,9 @@ class NeckController(Node):
         return [math.degrees(horizontal), math.degrees(vertical)]
 
 
-    def lookAtStart(self, req : LookAtDescription3DRequest): ##PRECISO SALVAR OS ANGULOS ENVIADOS VIA UPDATENECK PARA SEREM UTILIZADOS QUANDO O LOOKATSERVICE TERMINAR?
+    def lookAtStart(self, req : LookAtDescription3D.Request): ##PRECISO SALVAR OS ANGULOS ENVIADOS VIA UPDATENECK PARA SEREM UTILIZADOS QUANDO O LOOKATSERVICE TERMINAR?
         self.lookat_description_identifier = {'global_id': req.global_id, 'id': req.id, 'label': req.label}
-        self.sub_lookat = self.create_subscription(Detection3DArray, req.recognitions3d_topic, self.lookAtRecogCallback, queue_size=1)
+        self.sub_lookat = self.create_subscription(Detection3DArray, req.recognitions3d_topic, self.lookAtRecogCallback, 10, queue_size=1)
         self.last_pose  = None
         self.last_pose_time = 0.
         self.lookat_pose = None
@@ -228,7 +229,7 @@ class NeckController(Node):
             self.lookat_timer.cancel()  # Cancela o temporizador anterior, se existir
         self.lookat_timer = self.create_timer(self.look_at_timeout, self.lookAtTimeout)
 
-        return LookAtDescription3DResponse()
+        return LookAtDescription3D.Response()
 
     def lookAtRecogCallback(self, msg):
         selected_desc = self.selectDescription(msg.descriptions)
@@ -316,7 +317,7 @@ class NeckController(Node):
         
         self.lookat_description_identifier = None
 
-        return EmptyResponse()
+        return Empty.Response()
 
         
 
