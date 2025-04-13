@@ -58,7 +58,7 @@ class NeckController(Node):
         self.lookat_timer = None  # Temporizador para o timeout
         self.lookat_timeout_callback = None  # Callback a ser chamado no timeout
 
-
+        self.neck_port = "/dev/ttyUSB1"
 
         self.motors_config = {
             'horizontal_neck_joint':{
@@ -99,7 +99,7 @@ class NeckController(Node):
         # self.motortest.enableTorque()
 
         try:
-            self.neck_comm = DxlCommProtocol2("/dev/ttyUSB1")
+            self.neck_comm = DxlCommProtocol2(self.neck_port)
 
             for motor_name, props in self.motors_config.items():
                 
@@ -114,7 +114,7 @@ class NeckController(Node):
                 print(f"Motor {motor_name} with id {self.motors[motor_name].servo_id} attached")
 
         except Exception as e:
-            print("Neck port failed to connect.")
+            self.get_logger().error(f'Neck port "{self.neck_port}" failed to connect.')
 
     def emergencyButtonCallback(self, msg):
         self.pause = not msg.data
