@@ -47,7 +47,7 @@ class NeckController(Node):
         self.pub_joint_states = self.create_publisher(JointState, 'boris_head/joint_states', 10)
         self.seq = 0
 
-        self.srv_start_lookat = self.create_service(LookAtDescription3D, 'lookat_start', self.lookAtStart)
+        # self.srv_start_lookat = self.create_service(LookAtDescription3D, 'lookat_start', self.lookAtStart)
         self.srv_stop_lookat = self.create_service(Empty, 'lookat_stop', self.lookAtStop)
 
         self.sub_lookat = None
@@ -58,7 +58,15 @@ class NeckController(Node):
         self.lookat_timer = None  # Temporizador para o timeout
         self.lookat_timeout_callback = None  # Callback a ser chamado no timeout
 
-        self.neck_port = "/dev/ttyUSB1"
+        self.neck_port = "/dev/ttyNECK"
+
+        # ls /dev/ttyNECK -l
+        # lrwxrwxrwx 1 root root 15 abr 23 11:39 /dev/ttyNECK -> bus/usb/003/010
+        # ~/fbot_ws ❯ sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
+        # [sudo] password for stihl: 
+        # ~/fbot_ws ❯ ls /dev/ttyNECK -l                                                                      
+        # lrwxrwxrwx 1 root root 7 abr 23 11:44 /dev/ttyNECK -> ttyUSB1
+
 
         self.motors_config = {
             'horizontal_neck_joint':{
