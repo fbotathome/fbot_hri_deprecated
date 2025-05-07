@@ -19,10 +19,22 @@ from copy import deepcopy
 
 
 class NeckController(Node):
-
     def __init__(self, pause=False):
-
+        """
+        @brief A node for controlling the neck and head joints. It provides functionality 
+        for updating neck positions, looking at specific points, and handling emergency stops.
+        @param pause: If True, the node will not send any data to the motors.
+        """
         super().__init__('neck_controller')
+
+        self.neck_port = "/dev/ttyNECK"
+        self.motors: dict[str, JointProtocol2] = {}
+        self.neck_comm = None
+        try:
+            self.setupMotors()
+        except RuntimeError as e:
+            self.get_logger().fatal(str(e))
+            return 
 
         self.pause = False
         self.lock_updateNeck = False
@@ -58,15 +70,6 @@ class NeckController(Node):
         self.lookat_timer = None  # Temporizador para o timeout
         self.lookat_timeout_callback = None  # Callback a ser chamado no timeout
 
-        self.neck_port = "/dev/ttyNECK"
-
-        # ls /dev/ttyNECK -l
-        # lrwxrwxrwx 1 root root 15 abr 23 11:39 /dev/ttyNECK -> bus/usb/003/010
-        # ~/fbot_ws ❯ sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
-        # [sudo] password for stihl: 
-        # ~/fbot_ws ❯ ls /dev/ttyNECK -l                                                                      
-        # lrwxrwxrwx 1 root root 7 abr 23 11:44 /dev/ttyNECK -> ttyUSB1
-
 
         self.motors_config = {
             'horizontal_neck_joint':{
@@ -91,56 +94,66 @@ class NeckController(Node):
             }
         }
 
-        self.motors: dict[str, JointProtocol2] = {}
-
-        self.setupMotors()
+        
 
         self.initial_angle = [180.0, 180.0]
         self.updateNeck(self.initial_angle)
 
     def setupMotors(self):
-        
-        # self.neck_comm = DxlCommProtocol2("/dev/ttyUSB1")
-
-        # self.motortest = JointProtocol2(62)
-        # self.neck_comm.attachJoint(self.motortest)
-        # self.motortest.enableTorque()
-
+        """
+        @brief Initializes the Dynamixel motors, sets up the communication with the motors and configures their torque and velocity limits.
+        """
         try:
             self.neck_comm = DxlCommProtocol2(self.neck_port)
 
-            for motor_name, props in self.motors_config.items():
-                
-                self.motors[motor_name] = JointProtocol2(props['id'])
-
-                self.neck_comm.attachJoint(self.motors[motor_name])
-
-                self.motors[motor_name].enableTorque()
-
-                self.motors[motor_name].setVelocityLimit(self.vel_limit)
-
-                print(f"Motor {motor_name} with id {self.motors[motor_name].servo_id} attached")
-
         except Exception as e:
-            self.get_logger().error(f'Neck port "{self.neck_port}" failed to connect.')
+            raise RuntimeError(f"Failed to initialize NeckController: Neck port {self.neck_port} failed to connect. See readme for more details.")
+
+        for motor_name, props in self.motors_config.items():
+            
+            self.motors[motor_name] = JointProtocol2(props['id'])
+
+            self.neck_comm.attachJoint(self.motors[motor_name])
+
+            self.motors[motor_name].enableTorque()
+
+            self.motors[motor_name].setVelocityLimit(self.vel_limit)
+
+            # print(f"Motor {motor_name} with id {self.motors[motor_name].servo_id} attached")
+
 
     def emergencyButtonCallback(self, msg):
+        """
+        @brief Sets the pause state based on the emergency button's state.
+        @param msg (std_msgs.msg.Bool) The message containing the emergency button state.
+        """
         self.pause = not msg.data
 
     def updateNeckCallback(self, msg): 
-        self.get_logger().info("message received in /updateNeck")
+        """
+        @brief Updates the neck's position based on the received angles.
+        @param msg (std_msgs.msg.Float64MultiArray) The message containing the new neck angles.
+        """
+        # self.get_logger().info("message received in /updateNeck")
         data = msg.data
         self.updateNeck(list(data), from_updateNeckCallback=True)
 
     def updateNeckByPointCallback(self, msg):
-
+        """
+        @brief Computes the neck angles required to look at the given point and updates the neck's position.
+        @param msg (geometry_msgs.msg.PointStamped) The message containing the target point.
+        """
         transform = self.computeTFTransform(msg.header)
         ps = tf2_geometry_msgs.do_transform_point(msg, transform).point
         angle_msg = self.computeNeckStateByPoint(ps)
         self.updateNeck(angle_msg, from_updateNeckCallback=True)
 
     def updateNeck(self, data:list[float], from_updateNeckCallback = False):
-        
+        """
+        @brief Updates the neck's position based on the given angles.
+        @param data (list[float]) The list of angles for the neck joints.
+        @param from_updateNeckCallback (bool) Whether the update was triggered by a callback (default: False).
+        """
         self.get_logger().info("updating neck angles with data: "+str(data))
 
         if data:
@@ -164,11 +177,11 @@ class NeckController(Node):
 
 
     def updateJointsDict(self):
-
+        """
+        @brief Updates the joint state dictionary and publishes the joint states.
+        """
         msg = JointState()
 
-        # Nome da joint no URDF do Kinect
-        # msg.header.seq = self.seq
         msg.header.stamp = self.get_clock().now().to_msg()
         
         msg.name = []
@@ -189,9 +202,6 @@ class NeckController(Node):
 
         self.pub_joint_states.publish(msg)
 
-        ## PRA QUE SERVE ESSE SEQ?
-        self.seq += 1
-
         if (self.joints_dict['head_pan_joint'][1]<=0.3) and (self.joints_dict['head_tilt_joint'][1]<=0.3):
             if self.last_stopped_time is None:
                 self.last_stopped_time = msg.header.stamp
@@ -200,7 +210,12 @@ class NeckController(Node):
 
 
     def computeTFTransform(self, target_frame='camera_link_static', source_header=None, lastest=False):
-
+        """
+        @brief Computes the transform between two frames.
+        @param target_frame (str) The target frame ID.
+        @param source_header (std_msgs.msg.Header) The source frame header.
+        @param lastest (bool) Whether to use the latest transform (default: False).
+        """
         if not source_header:
             self.get_logger().error('source_header parameter was not given.')
             return
@@ -216,14 +231,21 @@ class NeckController(Node):
     
     
     def computeNeckStateByPoint(self, point):
-
+        """
+        @brief Computes the neck angles required to look at a given point.
+        @param point (geometry_msgs.msg.Point) The target point.
+        """
         horizontal = math.pi + math.atan2(point.y, point.x)
         dist = math.sqrt(point.x**2 + point.y**2)
         vertical = math.pi + math.atan2(point.z, dist)
         return [math.degrees(horizontal), math.degrees(vertical)]
 
 
-    def lookAtStart(self, req : LookAtDescription3D.Request): ##PRECISO SALVAR OS ANGULOS ENVIADOS VIA UPDATENECK PARA SEREM UTILIZADOS QUANDO O LOOKATSERVICE TERMINAR?
+    def lookAtStart(self, req : LookAtDescription3D.Request): 
+        """
+        @brief Stops the "look at" service and resets the neck position.
+        @param req (std_srvs.srv.Empty.Request) The service request.
+        """
         self.lookat_description_identifier = {'global_id': req.global_id, 'id': req.id, 'label': req.label}
         self.sub_lookat = self.create_subscription(Detection3DArray, req.recognitions3d_topic, self.lookAtRecogCallback, 10, queue_size=1)
         self.last_pose  = None
@@ -240,6 +262,10 @@ class NeckController(Node):
         return LookAtDescription3D.Response()
 
     def lookAtRecogCallback(self, msg):
+        """
+        @brief Callback for processing recognition messages and updating the neck position.
+        @param msg (fbot_vision_msgs.msg.Detection3DArray) The message containing the detected objects.
+        """
         selected_desc = self.selectDescription(msg.descriptions)
 
         if selected_desc is not None:
@@ -280,12 +306,18 @@ class NeckController(Node):
 
 
     def lookAtTimeout(self):
-        # Callback chamado quando o timeout é atingido
+        """
+        @brief Callback triggered when the "look at" service times out.
+        """
         self.get_logger().info("Timeout atingido no serviço lookAt!")
         self.updateNeck(data=self.initial_angle)
 
     
     def getCloserDescription(self, descriptions):
+        """
+        @brief Finds the closest description from a list of detected objects.
+        @param descriptions (list[fbot_vision_msgs.msg.Detection3D]) The list of detected objects.
+        """
         min_desc = None
         min_dist = float('inf')
         for desc in descriptions:
@@ -299,6 +331,10 @@ class NeckController(Node):
 
     # TODO: implement for another parameters like global_id or local_id
     def selectDescription(self, descriptions):
+        """
+        @brief Selects a description based on the target criteria.
+        @param descriptions (list[fbot_vision_msgs.msg.Detection3D]) The list of detected objects.
+        """
         selected_descriptions = []
 
         desired_label = self.lookat_description_identifier['label']
@@ -315,6 +351,10 @@ class NeckController(Node):
         return desc
 
     def lookAtStop(self, req):
+        """
+        @brief Stops the "look at" service and resets the neck position.
+        @param req (std_srvs.srv.Empty.Request) The service request.
+        """
         if self.sub_lookat is not None:
             self.sub_lookat.unregister()
             self.sub_lookat = None
@@ -327,7 +367,6 @@ class NeckController(Node):
 
         return Empty.Response()
 
-        
 
 def main(args=None):
     rclpy.init(args=args)

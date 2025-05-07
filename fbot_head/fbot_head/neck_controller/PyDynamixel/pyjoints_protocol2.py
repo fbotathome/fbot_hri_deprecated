@@ -44,11 +44,13 @@ class DxlCommProtocol2(object):
         self.baudRate = 2000000/(baudnum+1)
         self.socket = dxl.PortHandler(self.commPort)
         self.pack_handler = dxl.PacketHandler(PROTOCOL_VERSION)
+
         try:
             self.socket.openPort()
             print("Port Open Success")
         except Exception:
-            print("Port Open Error")
+            raise Exception("Port Open Error")
+        
         self.joints = []
         self.joint_ids = []
         self.total = 0

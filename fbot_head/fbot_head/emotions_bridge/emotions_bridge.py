@@ -8,6 +8,7 @@ import os
 import serial
 import json
 import asyncio
+import time
 
 class EmotionsBridge(Node):
 
@@ -19,7 +20,11 @@ class EmotionsBridge(Node):
 
         super().__init__('emotions_bridge')
 
-        self.serial = serial.Serial('/dev/ttyUSB1')
+        try:
+            self.serial = serial.Serial('/dev/ttyUSB0')
+        except serial.SerialException as e:
+            self.get_logger().error(f"Serial port error: {e}")
+            return
 
         self.motors = None
         #CARREGAR PARÂMETROS DO YAML    
@@ -31,6 +36,9 @@ class EmotionsBridge(Node):
         self.sendEmotion(self.current_emotion)
 
         self.sub_emotion = self.create_subscription(String, 'fbot_face/emotion', self.emotionCallback, 10)
+
+        time.sleep(2)
+        self.sendMotorsConfig()
         
     def sendMotorsConfig(self):
         """
@@ -57,7 +65,7 @@ class EmotionsBridge(Node):
 
             self.serial.write(data_bytes)
 
-            # self.get_logger().info(data_bytes)
+            # self.get_logger().info('WRITING: ' + str(data_bytes))
 
             if self.waitSerialResponse("success"):
                 success = True
@@ -77,6 +85,7 @@ class EmotionsBridge(Node):
             if self.serial.in_waiting > 0:
                 received_msg += self.serial.read(self.serial.in_waiting).decode('utf-8')
 
+                # self.get_logger().info(received_msg)
                 if "}" in received_msg:  # Supondo que '\n' seja o delimitador
                     break
 
@@ -99,7 +108,7 @@ class EmotionsBridge(Node):
         @param msg (std_msgs.msg.String) The message containing the new emotion.
         """
 
-        self.get_logger().info('Emotion received! ')
+        # self.get_logger().info('Emotion received! ')
         self.current_emotion = msg.data
         self.sendEmotion(self.current_emotion)
 
@@ -122,7 +131,7 @@ class EmotionsBridge(Node):
 
             log_message = log_message + write_msg[0] + ': ' + str(write_msg[1]) + '\n'
 
-        self.get_logger().info('Writing: '+self.current_emotion+'\n'+log_message)
+        self.get_logger().info('Writing: '+self.current_emotion+'\n')
 
         data_str = json.dumps(motors_dict)
 

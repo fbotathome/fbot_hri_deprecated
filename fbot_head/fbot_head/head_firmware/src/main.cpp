@@ -14,6 +14,8 @@ JsonDocument stringToJsonObject(String str);
 
 String write_to_motors(JsonObject motors_angles);
 
+void clearMotors();
+
 
 
 
@@ -39,14 +41,9 @@ void setup() {
 
   if(!stored_config.isEmpty()){
 
-    Serial.println(stored_config);
-
-    motors.clear(); // Clear the existing motors map
-
+    clearMotors();
     JsonDocument json_doc = stringToJsonObject(stored_config);
-
     JsonObject json_obj = json_doc.as<JsonObject>();
-      
     motors = configureMotors(json_obj);
 
   }
@@ -83,15 +80,18 @@ void loop() {
 
       preferences.putString("json_config", string_json);
 
-      for (auto& pair : motors) {
-        delete &pair.second; // Libera a memória do objeto Servo
-      }
-
-      motors.clear(); // Clear the existing motors map
+      clearMotors(); // Clear the existing motors map
       
       motors = configureMotors(json_obj);
 
-      response = "{\"response\": \"success\"}";
+      response = "{\"response\": \"success\", \"message\": [";
+      for (auto it = motors.begin(); it != motors.end(); ++it) {
+        response += "\"" + it->first + "\"";
+        if (std::next(it) != motors.end()) {
+          response += ", ";
+        }
+      }
+      response += "]}";
       
       break;
 
@@ -200,4 +200,13 @@ String write_to_motors(JsonObject motors_angles) { // Testar movimentação dos 
 
   //Serial.println("Todos os motores foram movidos com sucesso.");
   return "{\"response\": \"success\", \"message\": \"Motors moved successfully\"}";
+}
+
+void clearMotors() {
+  for (auto& motor_pair : motors) {
+    Servo* motor_ptr = &motor_pair.second; // Obter o ponteiro para o objeto Servo
+    motor_ptr->detach(); // Desanexar o motor do pino
+    // Não é necessário deletar explicitamente o objeto Servo, pois ele não foi alocado dinamicamente
+  }
+  motors.clear(); // Limpar o mapa
 }
