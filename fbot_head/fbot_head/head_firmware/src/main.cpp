@@ -4,7 +4,6 @@
 #include <map>
 #include <Preferences.h>
 
-
 //functions declarations
 std::map<String, Servo> configureMotors(JsonObject motors_config);
 
@@ -16,9 +15,6 @@ String write_to_motors(JsonObject motors_angles);
 
 void clearMotors();
 
-
-
-
 //global variables
 std::map<String, Servo> motors;
 
@@ -27,9 +23,6 @@ enum commands : int {
 };
 
 Preferences preferences;
-
-
-
 
 void setup() {
   // put your setup code here, to run once:
@@ -198,15 +191,13 @@ String write_to_motors(JsonObject motors_angles) { // Testar movimentação dos 
     motor.write(motor_angle);
   }
 
-  //Serial.println("Todos os motores foram movidos com sucesso.");
   return "{\"response\": \"success\", \"message\": \"Motors moved successfully\"}";
 }
 
 void clearMotors() {
   for (auto& motor_pair : motors) {
-    Servo* motor_ptr = &motor_pair.second; // Obter o ponteiro para o objeto Servo
-    motor_ptr->detach(); // Desanexar o motor do pino
-    // Não é necessário deletar explicitamente o objeto Servo, pois ele não foi alocado dinamicamente
+    Servo* motor_ptr = &motor_pair.second; 
+    motor_ptr->detach();
   }
-  motors.clear(); // Limpar o mapa
+  motors.clear(); 
 }

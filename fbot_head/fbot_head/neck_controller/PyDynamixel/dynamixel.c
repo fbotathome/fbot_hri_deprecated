@@ -373,17 +373,8 @@ void sync_write_word(int jointSocket, int first_address,
 		gbInstructionPacket[PARAMETER+i*3+2] = (unsigned char)ids[i];
 		gbInstructionPacket[PARAMETER+i*3+3] = (unsigned char)get_lowbyte(values[i]);
 		gbInstructionPacket[PARAMETER+i*3+4] = (unsigned char)get_highbyte(values[i]);
-		//printf("%d:%d, ", ids[i], values[i]);
 	}
-	//printf("\n");
-        // Comprimento calculato a partir de total
-	//(L+1) *N + 4
         gbInstructionPacket[LENGTH] = 3 * total + 4;
-	//for (i = 0 ; i < 3*total+7 ; i++)
-	//{
-	//	printf("%d ", gbInstructionPacket[i]);
-	//}
-	//printf("\n");
 	txrx_packet(jointSocket);
 }
 

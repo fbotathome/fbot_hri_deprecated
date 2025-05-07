@@ -49,7 +49,7 @@ class NeckController(Node):
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
         self.neck_updated = None
 
-        self.joints_dict = {    ## PRECISA DOS DOIS ULTIMOS ITENS? POIS SAO SEMPRE ZERO
+        self.joints_dict = { 
             'horizontal_neck_joint': (0., 0., 0.),
             'vertical_neck_joint':   (0., 0., 0.),
             'head_pan_joint':        (0., 0., 0.),
@@ -59,7 +59,7 @@ class NeckController(Node):
         self.pub_joint_states = self.create_publisher(JointState, 'boris_head/joint_states', 10)
         self.seq = 0
 
-        # self.srv_start_lookat = self.create_service(LookAtDescription3D, 'lookat_start', self.lookAtStart)
+        self.srv_start_lookat = self.create_service(LookAtDescription3D, 'lookat_start', self.lookAtStart)
         self.srv_stop_lookat = self.create_service(Empty, 'lookat_stop', self.lookAtStop)
 
         self.sub_lookat = None
@@ -67,9 +67,8 @@ class NeckController(Node):
         self.lookat_pose: PoseStamped = None
         self.last_stopped_time = None
         self.look_at_timeout = float("inf")
-        self.lookat_timer = None  # Temporizador para o timeout
-        self.lookat_timeout_callback = None  # Callback a ser chamado no timeout
-
+        self.lookat_timer = None 
+        self.lookat_timeout_callback = None
 
         self.motors_config = {
             'horizontal_neck_joint':{
@@ -94,8 +93,6 @@ class NeckController(Node):
             }
         }
 
-        
-
         self.initial_angle = [180.0, 180.0]
         self.updateNeck(self.initial_angle)
 
@@ -119,8 +116,6 @@ class NeckController(Node):
 
             self.motors[motor_name].setVelocityLimit(self.vel_limit)
 
-            # print(f"Motor {motor_name} with id {self.motors[motor_name].servo_id} attached")
-
 
     def emergencyButtonCallback(self, msg):
         """
@@ -134,7 +129,6 @@ class NeckController(Node):
         @brief Updates the neck's position based on the received angles.
         @param msg (std_msgs.msg.Float64MultiArray) The message containing the new neck angles.
         """
-        # self.get_logger().info("message received in /updateNeck")
         data = msg.data
         self.updateNeck(list(data), from_updateNeckCallback=True)
 
@@ -154,7 +148,6 @@ class NeckController(Node):
         @param data (list[float]) The list of angles for the neck joints.
         @param from_updateNeckCallback (bool) Whether the update was triggered by a callback (default: False).
         """
-        self.get_logger().info("updating neck angles with data: "+str(data))
 
         if data:
             pos_horizontal = np.radians(min(self.motors_config['horizontal_neck_joint']['max_angle'], max(self.motors_config['horizontal_neck_joint']['min_angle'], data[0])))
@@ -208,7 +201,6 @@ class NeckController(Node):
         else:
             self.last_stopped_time = None
 
-
     def computeTFTransform(self, target_frame='camera_link_static', source_header=None, lastest=False):
         """
         @brief Computes the transform between two frames.
@@ -229,17 +221,15 @@ class NeckController(Node):
     
         return transform
     
-    
     def computeNeckStateByPoint(self, point):
         """
         @brief Computes the neck angles required to look at a given point.
         @param point (geometry_msgs.msg.Point) The target point.
         """
         horizontal = math.pi + math.atan2(point.y, point.x)
-        dist = math.sqrt(point.x**2 + point.y**2)
+        dist = np.hypot(point.x, point.y)
         vertical = math.pi + math.atan2(point.z, dist)
         return [math.degrees(horizontal), math.degrees(vertical)]
-
 
     def lookAtStart(self, req : LookAtDescription3D.Request): 
         """
@@ -254,9 +244,8 @@ class NeckController(Node):
         self.last_stopped_time = None
         self.look_at_timeout = float("inf") if req.timeout == 0 else req.timeout
 
-        # temporizador pro timeout
         if self.lookat_timer:
-            self.lookat_timer.cancel()  # Cancela o temporizador anterior, se existir
+            self.lookat_timer.cancel() 
         self.lookat_timer = self.create_timer(self.look_at_timeout, self.lookAtTimeout)
 
         return LookAtDescription3D.Response()
@@ -283,7 +272,6 @@ class NeckController(Node):
                 if self.lookat_timer:
                     self.lookat_timer.reset()
 
-                ##INCLUINDO ESCRITA NOS MOTORES
                 transform = self.computeTFTransform(self.lookat_pose.header, lastest=True)
                 ps = tf2_geometry_msgs.do_transform_pose(self.lookat_pose, transform).pose.position
 
@@ -312,7 +300,6 @@ class NeckController(Node):
         self.get_logger().info("Timeout atingido no serviço lookAt!")
         self.updateNeck(data=self.initial_angle)
 
-    
     def getCloserDescription(self, descriptions):
         """
         @brief Finds the closest description from a list of detected objects.
@@ -322,7 +309,7 @@ class NeckController(Node):
         min_dist = float('inf')
         for desc in descriptions:
             p = desc.bbox.center.position
-            dist = math.sqrt(p.x**2 + p.y**2 + p.z**2)
+            dist = np.linalg.norm([p.x, p.y, p.z])
             if dist < min_dist:
                 min_desc = desc
                 min_dist = dist
@@ -366,7 +353,6 @@ class NeckController(Node):
         self.lookat_description_identifier = None
 
         return Empty.Response()
-
 
 def main(args=None):
     rclpy.init(args=args)
