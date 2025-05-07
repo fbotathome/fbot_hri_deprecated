@@ -80,6 +80,7 @@ class EmotionsBridge(Node):
         @param response_msg (str) The expected response message.
         """
         received_msg = ""
+        
 
         while True:
             if self.serial.in_waiting > 0:
