@@ -7,6 +7,9 @@ from std_msgs.msg import String, Float64MultiArray
 class EmotionsPublisher(Node):
 
     def __init__(self):
+        """
+        @brief A Node for sending different emotions periodically, in order to test the bridge node.
+        """
         super().__init__('emotions_publisher')
         self.publisher_ = self.create_publisher(String, 'fbot_face/emotion', 10)
         self.publisher_neck = self.create_publisher(Float64MultiArray, '/updateNeck', 10)
@@ -21,7 +24,6 @@ class EmotionsPublisher(Node):
         msg.data = self.emotions[self.i]
         self.publisher_.publish(msg)
         self.publisher_neck.publish(Float64MultiArray(data=[200.0-(self.i*5), 180.0]))
-        self.get_logger().info('Publishing: "%s"' % msg.data)
         self.i = self.i+1 if self.i<6 else 0
 
 

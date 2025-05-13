@@ -20,12 +20,8 @@ int dxl_hal_open(int *jointSocket, char *dev_name, float baudrate)
 {
 	struct termios newtio;
 	struct serial_struct serinfo;
-	// speed_t ss = 0;
-	// char dev_name[100] = {0, };
 
 	gSocket_fd = -1;
-
-	// sprintf(dev_name, "/dev/ttyUSB%d", deviceIndex);
 
 	strcpy(gDeviceName, dev_name);
 	memset(&newtio, 0, sizeof(newtio));
@@ -40,8 +36,8 @@ int dxl_hal_open(int *jointSocket, char *dev_name, float baudrate)
 	newtio.c_iflag		= IGNPAR;
 	newtio.c_oflag		= 0;
 	newtio.c_lflag		= 0;
-	newtio.c_cc[VTIME]	= 0;	// time-out 값 (TIME * 0.1초) 0 : disable
-	newtio.c_cc[VMIN]	= 0;	// MIN 은 read 가 return 되기 위한 최소 문자 개수
+	newtio.c_cc[VTIME]	= 0;
+	newtio.c_cc[VMIN]	= 0;
 
 	tcflush(gSocket_fd, TCIFLUSH);
 	tcsetattr(gSocket_fd, TCSANOW, &newtio);
@@ -49,12 +45,10 @@ int dxl_hal_open(int *jointSocket, char *dev_name, float baudrate)
 	if(gSocket_fd == -1)
 		return 0;
 
-
 	if(ioctl(gSocket_fd, TIOCGSERIAL, &serinfo) < 0) {
 		fprintf(stderr, "Cannot get serial info\n");
 		return 0;
 	}
-
 
 	gfByteTransTime = (float)((1000.0f / baudrate) * 12.0f);
 
@@ -112,9 +106,6 @@ int dxl_hal_set_baud( int socket, float baudrate  )
 		fprintf(stderr, "Cannot set serial info\n");
 		return 0;
 	}
-
-	//dxl_hal_close();
-	//dxl_hal_open(gDeviceName, baudrate);
 
 	gfByteTransTime = (float)((1000.0f / baudrate) * 12.0f);
 	return 1;

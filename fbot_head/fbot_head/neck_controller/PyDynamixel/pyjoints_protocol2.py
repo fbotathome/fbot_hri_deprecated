@@ -44,11 +44,13 @@ class DxlCommProtocol2(object):
         self.baudRate = 2000000/(baudnum+1)
         self.socket = dxl.PortHandler(self.commPort)
         self.pack_handler = dxl.PacketHandler(PROTOCOL_VERSION)
+
         try:
             self.socket.openPort()
             print("Port Open Success")
         except Exception:
-            print("Port Open Error")
+            raise Exception("Port Open Error")
+        
         self.joints = []
         self.joint_ids = []
         self.total = 0
@@ -86,35 +88,6 @@ class DxlCommProtocol2(object):
         '''
 
         self.socket.closePort()
-
-    # def sendGoalAngles(self):
-
-    #     ''' Communicates the goal position for all
-    #     servos connected to this port
-    #     '''
-
-    #     chJoints = [j for j in self.joints if j.changed is True]
-
-    #     self._syncWrite(chJoints, ADDR_MX_GOAL_POSITION, 2)
-
-    #     for i in chJoints:
-    #         i.changed = False
-
-    # def sendMaxTorques(self, maxTorque = None):
-
-    #     ''' Communicates the max torques for all
-    #     servos connected to this port. Optionally
-    #     the argument maxTorque can be provided.
-    #     If provided, the same maxTorque will be
-    #     set to all attached joints.
-    #     '''
-
-    #     if maxTorque:
-    #         for j in self.joints:
-    #             j.setMaxTorque(maxTorque)
-
-    #     values = [j.maxTorque for j in self.joints]
-    #     self._syncWrite(self.joints, MAXADDR_MX_TORQUE_ENABLE, 2, values)
 
     def _syncWrite(self, servos, addr, info_len, values=None):
 
@@ -212,29 +185,6 @@ class JointProtocol2(object):
 
         self.pack_handler = pack_handler
 
-    # def setMaxTorque(self, maxTorque):
-
-    #     ''' Sets the maximum torque (does not
-    #     send it yet!). To send it the method
-    #     sendMaxTorque() must be called.
-    #     '''
-
-    #     self.maxTorque = min(int(maxTorque), MAXTORQUELIMIT)
-
-    # def sendMaxTorque(self, maxTorque = None):
-
-    #     ''' Sends a command to this specific
-    #     servomotor to set its maximum torque.
-    #     If the argument maxTorque is not
-    #     provided, then it sends the last
-    #     value set using setMaxTorque().
-    #     '''
-
-    #     if maxTorque:
-    #         self.setMaxTorque(maxTorque)
-    #     self.pack_handler.write2ByteTxRx(self.socket, \
-    #             self.servo_id, MAXADDR_MX_TORQUE_ENABLE, self.maxTorque)
-
     def setGoalAngle(self, angle):
 
         self.goalAngle = float(angle)
@@ -276,19 +226,22 @@ class JointProtocol2(object):
 
     def getAngle(self):
 
-        ''' Returns the current angle last read
+        ''' 
+        Returns the current angle last read
         '''
 
         return self.currAngle
 
     def enableTorque(self):
-        ''' Enables torque in this joint
+        ''' 
+        Enables torque in this joint
         '''
 
         self.pack_handler.write1ByteTxRx(self.socket, self.servo_id, ADDR_MX_TORQUE_ENABLE, 1)
 
     def disableTorque(self):
-        ''' Disables torque in this joint
+        ''' 
+        Disables torque in this joint
         '''
 
         self.pack_handler.write1ByteTxRx(self.socket, self.servo_id, ADDR_MX_TORQUE_ENABLE, 0)
