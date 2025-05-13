@@ -1,14 +1,12 @@
+import os
+import yaml
+import json
+import time
 import rclpy
+import serial
 from rclpy.node import Node
 from std_msgs.msg import String
-
-import yaml
 from ament_index_python.packages import get_package_share_directory
-import os
-import serial
-import json
-import asyncio
-import time
 
 class EmotionsBridge(Node):
 
@@ -40,7 +38,7 @@ class EmotionsBridge(Node):
         time.sleep(2)
         self.sendMotorsConfig()
         
-    def sendMotorsConfig(self):
+    def sendMotorsConfig(self) -> None:  
         """
         @brief Sends motor configuration data to the microcontroller, so it can instantiate the motor classes in its firmware.
         """
@@ -70,10 +68,10 @@ class EmotionsBridge(Node):
             else:
                 retries+=1
 
-    def waitSerialResponse(self, response_msg):
+    def waitSerialResponse(self, response_msg: str) -> bool:  
         """
         @brief Waits for a response from the serial port and checks if it matches the expected response.
-        @param response_msg (str) The expected response message.
+        @param response_msg: (str) The expected response message.  
         """
         received_msg = ""
 
@@ -97,19 +95,19 @@ class EmotionsBridge(Node):
             self.get_logger().warn(f'Unexpected response received: {message}')
             return False
 
-    def emotionCallback(self, msg):
+    def emotionCallback(self, msg: String) -> None:  
         """
         @brief Callback function for the emotion subscription. It updates the current emotion and sends the corresponding motor commands
-        @param msg (std_msgs.msg.String) The message containing the new emotion.
+        @param msg: (std_msgs.msg.String) The message containing the new emotion.  
         """
 
         self.current_emotion = msg.data
         self.sendEmotion(self.current_emotion)
 
-    def sendEmotion(self, emotion):
+    def sendEmotion(self, emotion) -> None:
         """
         @brief Retrieves motor values for the given emotion and sends them as a JSON-encoded string via serial communication.
-        @param emotion (str) The emotion to be sent.
+        @param emotion: (str) The emotion to be sent.  
         """
         log_message = ''
 
@@ -135,10 +133,10 @@ class EmotionsBridge(Node):
         return
 
     
-    def loadMotorsParams(self, filename):
+    def loadMotorsParams(self, filename: str) -> None:  
         """
         @brief Loads motor configurations from a YAML file and declares them as parameters.
-        @param filename (str) The name of the YAML file at the config directory.
+        @param filename: (str) The name of the YAML file at the config directory.  
         """
         with open(os.path.join(get_package_share_directory('fbot_head'), 'config', filename)) as config_file:
             config = yaml.safe_load(config_file)[self.get_name()]['ros__parameters']
