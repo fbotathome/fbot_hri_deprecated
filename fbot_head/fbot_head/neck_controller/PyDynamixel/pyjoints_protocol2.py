@@ -28,7 +28,7 @@ class DxlCommProtocol2(object):
     protocol.
     ''' 
 
-    def __init__(self, commPort="/dev/ttyUSB0", baudnum = 1):
+    def __init__(self, commPort="/dev/ttyNECK", baudnum = 1):
 
         ''' The argument commPort should be
         the path to the serial device.
