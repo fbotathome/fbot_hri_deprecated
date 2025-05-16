@@ -4,7 +4,7 @@ from rclpy.node import Node
 import os
 import warnings
 from std_msgs.msg import Int16
-from scripts.new_detect_hotword import NewDetectHotWord
+from fbot_speech_scripts.new_detect_hotword import NewDetectHotWord
 import rospkg
 from termcolor import colored
 

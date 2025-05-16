@@ -1,16 +1,2 @@
-espnet
-espnet_model_zoo
-pvporcupine
-pvrecorder
-transformers
-SpeechRecognition
-playsound
+sounddevice
 termcolor
-audioplayer
-tensorflow==2.8
-ffmpeg
-nvidia-riva-client
-faster-whisper==1.0.3
-halo==0.0.31 
-webrtcvad==2.0.10
-realtimestt

@@ -108,7 +108,7 @@ class WavToMouth(Node):
         self._openStream()
 
     def setFilepath(self, filepath):
-        self.filepath = os.path.join(AUDIO, filepath)
+        self.filepath = os.path.join(filepath)
         self._readDataOfAudio()
 
     def setDataAndInfo(self, data, info):

@@ -4,7 +4,7 @@ import os
 import time
 import rclpy
 from rclpy.node import Node
-from scripts.wav_to_mouth import WavToMouth
+from fbot_speech_scripts.wav_to_mouth import WavToMouth
 from fbot_speech_msgs.srv import (
     AudioPlayer,
     AudioPlayerByData,
