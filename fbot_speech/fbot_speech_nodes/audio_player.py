@@ -28,28 +28,45 @@ class AudioPlayerNode(Node):
         # Initialize WavToMouth object
         global wm
         wm = WavToMouth()
-
-        # Get parameters
-        self.audio_player_service_param = self.get_parameter_or("services/audio_player/service", "/fbot_speech/ap/audio_player")
-        self.audio_player_by_data_service_param = self.get_parameter_or("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data")
-        self.audio_player_stream_start_service_param = self.get_parameter_or("services/stream_start/service", "/fbot_speech/ap/stream_start")
-        self.audio_player_stream_stop_service_param = self.get_parameter_or("services/stream_stop/service", "/fbot_speech/ap/stream_stop")
-        self.audio_player_stream_data_topic_param = self.get_parameter_or("subscribers/stream_data/topic", "/fbot_speech/ap/stream_data")
-        self.stream_timeout = self.get_parameter_or("stream_timeout", 10)
-
-        # Create services
-        self.create_service(AudioPlayer, self.audio_player_service_param, self.toTalk)
-        self.create_service(AudioPlayerByData, self.audio_player_by_data_service_param, self.toTalkByData)
-        self.create_service(AudioStreamStart, self.audio_player_stream_start_service_param, self.audioStreamStart)
-        self.create_service(Empty, self.audio_player_stream_stop_service_param, self.stopStream)
-
-        # Create subscriber
-        self.create_subscription(AudioData, self.audio_player_stream_data_topic_param, self.streamDataCallback, 10)
+        self.declareParameters()
+        self.readParameters()
+        self.init_rosComm()
+        
 
         # Timer to check for stream timeout
         self.create_timer(1.0, self.checkStreamTimeout)
 
         self.get_logger().info(colored("Audio Player is on!", "green"))
+
+
+    def init_rosComm(self):
+        super().__init__(self)
+        # Create service
+        self.audioPlayerService = self.create_service(AudioPlayer, self.audio_player_service_param, self.toTalk)
+        self.audioByDataService = self.create_service(AudioPlayerByData, self.audio_player_by_data_service_param, self.toTalkByData)
+        self.audioStreamStartService = self.create_service(AudioStreamStart, self.audio_player_stream_start_service_param, self.audioStreamStart)
+        self.audioStreamStopService = self.create_service(Empty, self.audio_player_stream_stop_service_param, self.stopStream)
+
+        # Create subscriber
+        self.audioPlayerTopicSub = self.create_subscription(AudioData, self.audio_player_stream_data_topic_param, self.streamDataCallback, 10)
+        
+    def declareParameters(self):
+        # Declare parameters
+        self.declare_parameter("services/audio_player/service", "/fbot_speech/ap/audio_player")
+        self.declare_parameter("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data")
+        self.declare_parameter("services/stream_start/service", "/fbot_speech/ap/stream_start")
+        self.declare_parameter("services/stream_stop/service", "/fbot_speech/ap/stream_stop")
+        self.declare_parameter("subscribers/stream_data/topic", "/fbot_speech/ap/stream_data")
+        self.declare_parameter("stream_timeout", 10)
+
+    def readParameters(self):
+        # Get parameters
+        self.audio_player_service_param = self.get_parameter("services/audio_player/service")
+        self.audio_player_by_data_service_param = self.get_parameter("services/audio_player_by_data/service")
+        self.audio_player_stream_start_service_param = self.get_parameter("services/stream_start/service")
+        self.audio_player_stream_stop_service_param = self.get_parameter("services/stream_stop/service")
+        self.audio_player_stream_data_topic_param = self.get_parameter("subscribers/stream_data/topic")
+        self.stream_timeout = self.get_parameter("stream_timeout")
 
     def toTalk(self, request, response):
         if wm.streaming:
@@ -130,7 +147,7 @@ def main(args=None):
 
     # Clean up
     audio_player_node.destroy_node()
-    rclpy.shutdown()
+    rclpy.try_shutdown()
 
 
 if __name__ == "__main__":
