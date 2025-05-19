@@ -21,7 +21,6 @@ class SpeechSynthesizerNode(Node):
         self.get_logger().info("Speech Synthesizer Node initialized!")
 
     def init_rosComm(self):
-        super().__init__(self)
         # Create subscriber
         self.synthesizerSubscriber = self.create_subscription(SynthesizeSpeechMessage, self.synthesizer_subscriber_param, self.synthesizeSpeechCallback, 10)
         # Create service

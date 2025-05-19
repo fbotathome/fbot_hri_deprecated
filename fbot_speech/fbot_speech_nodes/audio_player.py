@@ -40,7 +40,6 @@ class AudioPlayerNode(Node):
         self.get_logger().info(colored("Audio Player is on!", "green"))
 
     def init_rosComm(self):
-        super().__init__(self)
         # Create service
         self.audioPlayerService = self.create_service(AudioPlayer, self.audio_player_service_param, self.toTalk)
         self.audioByDataService = self.create_service(AudioPlayerByData, self.audio_player_by_data_service_param, self.toTalkByData)
@@ -60,12 +59,12 @@ class AudioPlayerNode(Node):
 
     def readParameters(self):
         # Get parameters
-        self.audio_player_service_param = self.get_parameter("services.audio_player.service")
-        self.audio_player_by_data_service_param = self.get_parameter("services.audio_player_by_data.service")
-        self.audio_player_stream_start_service_param = self.get_parameter("services.stream_start.service")
-        self.audio_player_stream_stop_service_param = self.get_parameter("services.stream_stop.service")
-        self.audio_player_stream_data_topic_param = self.get_parameter("subscribers.stream_data.topic")
-        self.stream_timeout = self.get_parameter("stream_timeout")
+        self.audio_player_service_param = self.get_parameter("services.audio_player.service").get_parameter_value().string_value
+        self.audio_player_by_data_service_param = self.get_parameter("services.audio_player_by_data.service").get_parameter_value().string_value
+        self.audio_player_stream_start_service_param = self.get_parameter("services.stream_start.service").get_parameter_value().string_value
+        self.audio_player_stream_stop_service_param = self.get_parameter("services.stream_stop.service").get_parameter_value().string_value
+        self.audio_player_stream_data_topic_param = self.get_parameter("subscribers.stream_data.topic").get_parameter_value().string_value
+        self.stream_timeout = self.get_parameter("stream_timeout").get_parameter_value().integer_value
 
     def toTalk(self, request, response):
         """
