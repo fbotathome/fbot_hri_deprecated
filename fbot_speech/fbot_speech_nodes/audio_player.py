@@ -22,7 +22,17 @@ last_stream_data_timestamp = None
 wm = None
 
 class AudioPlayerNode(Node):
+    """
+    @brief Class to handle audio playback and streaming.
+    @details This class provides services to play audio files, stream audio data, and stop streaming.
+
+    """
+    
     def __init__(self):
+        """
+        @brief Constructor for the AudioPlayerNode class.
+        @details Initializes the node, declares parameters, and sets up services and subscribers.
+        """
         super().__init__('audio_player')
         
         # Initialize WavToMouth object
@@ -69,6 +79,12 @@ class AudioPlayerNode(Node):
         self.stream_timeout = self.get_parameter("stream_timeout")
 
     def toTalk(self, request, response):
+        """
+        @brief Service callback to play audio from a file.
+        This function is called when the service is requested. It sets the file path for the audio player and plays the audio.
+        @param request: Request object containing the audio file path.
+        @return: Response object indicating success or failure.
+        """
         if wm.streaming:
             response.success = False
             return response
@@ -81,6 +97,12 @@ class AudioPlayerNode(Node):
         return response
         
     def toTalkByData(self, request, response):
+        """
+        @brief Service callback to play audio from raw data.
+        This function is called when the service is requested. It sets the audio data and info for the audio player and plays the audio.
+        @param request: Request object containing the audio data and info.
+        @return: Response object indicating success or failure.
+        """
         if wm.streaming:
             response.success = False
             return response
@@ -94,6 +116,12 @@ class AudioPlayerNode(Node):
         return response
 
     def audioStreamStart(self, request, response):
+        """
+        @brief Service callback to start audio streaming.
+        This function is called when the service is requested. It sets the audio info for the audio player and starts streaming.
+        @param request: Request object containing the audio info.
+        @return: Response object indicating success or failure.
+        """
         global last_stream_data_timestamp
         if wm.streaming:
             response.success = False
@@ -110,6 +138,12 @@ class AudioPlayerNode(Node):
         return response
 
     def stopStream(self, request, response):
+        """
+        @brief Service callback to stop audio streaming.
+        This function is called when the service is requested. It stops the audio streaming and resets the last stream data timestamp.
+        @param request: Request object (not used).
+        @return: Response object indicating success or failure.
+        """
         global last_stream_data_timestamp
         wm.requestStopStream()
 
@@ -122,12 +156,23 @@ class AudioPlayerNode(Node):
         return response
 
     def streamDataCallback(self, data):
+        """
+        @brief Callback function for audio stream data.
+        This function is called when audio stream data is received. It updates the last stream data timestamp and processes the data.
+        @param data: Audio data received from the stream.
+        @return: None
+        """
         global last_stream_data_timestamp
         if wm.streaming:
             last_stream_data_timestamp = self.get_clock().now()
             wm.streamDataCallback(data)
 
     def checkStreamTimeout(self):
+        """
+        @brief Check for stream timeout.
+        This function checks if the stream has timed out based on the last stream data timestamp. If it has, it stops the stream.
+        @return: None
+        """
         global last_stream_data_timestamp
         if wm.streaming:
             if last_stream_data_timestamp is not None:
