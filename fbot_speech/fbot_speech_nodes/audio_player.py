@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
 
-import os
 import time
 import rclpy
 from rclpy.node import Node
 from fbot_speech_scripts.wav_to_mouth import WavToMouth
-from fbot_speech_msgs.srv import (
-    AudioPlayer,
-    AudioPlayerByData,
-    AudioStreamStart
-)
+from fbot_speech_msgs.srv import AudioPlayer, AudioPlayerByData, AudioStreamStart
 from audio_common_msgs.msg import AudioData
 from std_srvs.srv import Empty
 
@@ -34,20 +29,15 @@ class AudioPlayerNode(Node):
         @details Initializes the node, declares parameters, and sets up services and subscribers.
         """
         super().__init__('audio_player')
-        
         # Initialize WavToMouth object
         global wm
         wm = WavToMouth()
         self.declareParameters()
         self.readParameters()
         self.init_rosComm()
-        
-
         # Timer to check for stream timeout
         self.create_timer(1.0, self.checkStreamTimeout)
-
         self.get_logger().info(colored("Audio Player is on!", "green"))
-
 
     def init_rosComm(self):
         super().__init__(self)
@@ -56,26 +46,25 @@ class AudioPlayerNode(Node):
         self.audioByDataService = self.create_service(AudioPlayerByData, self.audio_player_by_data_service_param, self.toTalkByData)
         self.audioStreamStartService = self.create_service(AudioStreamStart, self.audio_player_stream_start_service_param, self.audioStreamStart)
         self.audioStreamStopService = self.create_service(Empty, self.audio_player_stream_stop_service_param, self.stopStream)
-
         # Create subscriber
         self.audioPlayerTopicSub = self.create_subscription(AudioData, self.audio_player_stream_data_topic_param, self.streamDataCallback, 10)
         
     def declareParameters(self):
         # Declare parameters
-        self.declare_parameter("services/audio_player/service", "/fbot_speech/ap/audio_player")
-        self.declare_parameter("services/audio_player_by_data/service", "/fbot_speech/ap/audio_player_by_data")
-        self.declare_parameter("services/stream_start/service", "/fbot_speech/ap/stream_start")
-        self.declare_parameter("services/stream_stop/service", "/fbot_speech/ap/stream_stop")
-        self.declare_parameter("subscribers/stream_data/topic", "/fbot_speech/ap/stream_data")
+        self.declare_parameter("services.audio_player.service", "/fbot_speech/ap/audio_player")
+        self.declare_parameter("services.audio_player_by_data.service", "/fbot_speech/ap/audio_player_by_data")
+        self.declare_parameter("services.stream_start.service", "/fbot_speech/ap/stream_start")
+        self.declare_parameter("services.stream_stop.service", "/fbot_speech/ap/stream_stop")
+        self.declare_parameter("subscribers.stream_data.topic", "/fbot_speech/ap/stream_data")
         self.declare_parameter("stream_timeout", 10)
 
     def readParameters(self):
         # Get parameters
-        self.audio_player_service_param = self.get_parameter("services/audio_player/service")
-        self.audio_player_by_data_service_param = self.get_parameter("services/audio_player_by_data/service")
-        self.audio_player_stream_start_service_param = self.get_parameter("services/stream_start/service")
-        self.audio_player_stream_stop_service_param = self.get_parameter("services/stream_stop/service")
-        self.audio_player_stream_data_topic_param = self.get_parameter("subscribers/stream_data/topic")
+        self.audio_player_service_param = self.get_parameter("services.audio_player.service")
+        self.audio_player_by_data_service_param = self.get_parameter("services.audio_player_by_data.service")
+        self.audio_player_stream_start_service_param = self.get_parameter("services.stream_start.service")
+        self.audio_player_stream_stop_service_param = self.get_parameter("services.stream_stop.service")
+        self.audio_player_stream_data_topic_param = self.get_parameter("subscribers.stream_data.topic")
         self.stream_timeout = self.get_parameter("stream_timeout")
 
     def toTalk(self, request, response):
@@ -128,10 +117,8 @@ class AudioPlayerNode(Node):
             return response
         
         last_stream_data_timestamp = self.get_clock().now()
-
         info = request.audio_info
         wm.setAudioInfo(info)
-
         wm.startStream()
 
         response.success = True
@@ -146,12 +133,9 @@ class AudioPlayerNode(Node):
         """
         global last_stream_data_timestamp
         wm.requestStopStream()
-
         last_stream_data_timestamp = None
-
         while wm.streaming:
             time.sleep(0.1)
-
         response.success = True
         return response
 
@@ -182,18 +166,14 @@ class AudioPlayerNode(Node):
                     wm.requestStopStream()
                     last_stream_data_timestamp = None
 
-
 def main(args=None):
     rclpy.init(args=args)
-
     # Create and spin the node
     audio_player_node = AudioPlayerNode()
     rclpy.spin(audio_player_node)
-
     # Clean up
     audio_player_node.destroy_node()
     rclpy.try_shutdown()
-
 
 if __name__ == "__main__":
     main()
