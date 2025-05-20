@@ -15,12 +15,12 @@ class SpeechSynthesizerNode(Node):
         self.get_logger().info("Initializing Speech Synthesizer Node...")
         self.declareParameters()
         self.readParameters()
-        self.init_rosComm()
+        self.initRosComm()
         auth = riva.client.Auth(uri=self.riva_url)
         self.riva_tts = riva.client.SpeechSynthesisService(auth)
         self.get_logger().info("Speech Synthesizer Node initialized!")
 
-    def init_rosComm(self):
+    def initRosComm(self):
         # Create subscriber
         self.synthesizerSubscriber = self.create_subscription(SynthesizeSpeechMessage, self.synthesizer_subscriber_param, self.synthesizeSpeechCallback, 10)
         # Create service
