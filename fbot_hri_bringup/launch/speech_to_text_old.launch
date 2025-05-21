@@ -1,7 +1,0 @@
-<?xml version="1.0" ?>
-<launch>
-	<node name="speech_recognizer" pkg="fbot_speech" type="speech_recognizer_old.py" output="screen">
-		<rosparam file="$(find fbot_speech)/config/ros.yaml" command="load"/>
-		<rosparam file="$(find fbot_speech)/config/fbot_speech_recognizer_old.yaml" command="load"/>
-	</node>
-</launch>

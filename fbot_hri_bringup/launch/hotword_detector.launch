@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<launch>
-
-    <rosparam file="$(find fbot_speech)/config/fbot_hotword_detection.yaml" command="load"/>
-
-    <node name="detector_hotword_node" pkg="fbot_speech" type="detector_hotword_node.py"/>
-
-</launch>
