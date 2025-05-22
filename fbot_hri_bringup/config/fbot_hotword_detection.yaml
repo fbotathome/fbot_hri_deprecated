@@ -2,3 +2,6 @@ detector_hotword_node:
   ros__parameters:
     fbot_hotword_detection:
       sensibility: 0.7
+      words:
+        - "Hello-Boris"
+        - "It--s-right"

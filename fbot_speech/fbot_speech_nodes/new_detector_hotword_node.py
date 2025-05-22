@@ -4,8 +4,7 @@ from rclpy.node import Node
 import os
 from std_msgs.msg import Int16
 from fbot_speech_scripts.new_detect_hotword import NewDetectHotWord
-
-PACK_DIR = os.path.join(os.path.expanduser("~"), 'fbot_ws', 'src', 'fbot_hri', 'fbot_speech')
+from ament_index_python.packages import get_package_share_directory
 
 class HotwordDetectorNode(Node):
     def __init__(self):
@@ -14,18 +13,13 @@ class HotwordDetectorNode(Node):
         This class is responsible for detecting hotwords using the Porcupine library.
         """
         super().__init__('detector_hotword_node')
+
+        ws_dir = os.path.abspath(os.path.join(get_package_share_directory('fbot_behavior'), '../../../..'))
+        self.pack_dir = os.path.join(ws_dir, "src", "fbot_hri", "fbot_speech")
+
         self.declareParameters()
         self.readParameters()
         self.initRosComm()
-
-        # Get the package directory
-        self.pack_dir = PACK_DIR
-
-        self.keyword = [
-            self.pack_dir + '/resources/Hello-Boris_en_linux_v3_0_0.ppn',
-            self.pack_dir + '/resources/It--s-right_en_linux_v3_0_0.ppn',
-            self.pack_dir + '/resources/It--s-wrong_en_linux_v3_0_0.ppn'
-        ]
 
         # Sensibility for each keyword
         self.sensibility = [self.sensibility] * len(self.keyword)
@@ -33,6 +27,7 @@ class HotwordDetectorNode(Node):
         # Create hotword detector instance
         self.detector = NewDetectHotWord(self.keyword, self.sensibility)
         self.detector.hear()
+        
         while rclpy.ok():
             result = self.detector.process()
             self.get_logger().info(f"Hotword Detected: {result}")
@@ -55,7 +50,9 @@ class HotwordDetectorNode(Node):
         @brief Declare parameters for the node.
         """
         self.declare_parameter('fbot_hotword_detection.sensibility', 0.5)
+        self.declare_parameter('fbot_hotword_detection.words', rclpy.Parameter.Type.STRING_ARRAY)
         self.declare_parameter('publishers.fbot_hotword_detection.topic', '/fbot_speech/bhd/detected')
+        
 
     def readParameters(self):
         """
@@ -63,6 +60,10 @@ class HotwordDetectorNode(Node):
         """
         self.detector_publisher_param = self.get_parameter('publishers.fbot_hotword_detection.topic').get_parameter_value().string_value
         self.sensibility = self.get_parameter('fbot_hotword_detection.sensibility').get_parameter_value().double_value
+        self.words = self.get_parameter('fbot_hotword_detection.words').get_parameter_value().string_array_value
+        self.keyword = []
+        for word in self.words:
+            self.keyword.append(self.pack_dir + '/resources/'+word+'_en_linux_v3_0_0.ppn')
 
         
 def main(args=None):
