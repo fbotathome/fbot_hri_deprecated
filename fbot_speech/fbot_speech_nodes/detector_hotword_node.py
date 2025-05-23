@@ -45,7 +45,7 @@ class HotwordDetectorNode(Node):
         This function sets up the publisher and subscriber for hotword detection.
         """
         # Create publisher
-        self.detector_publisher = self.create_publisher(String, self.detector_publisher_param, 10)
+        self.hotword_detector_publisher = self.create_publisher(String, self.detector_publisher_param, 10)
 
     def declareParameters(self):
         """
