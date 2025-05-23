@@ -65,6 +65,5 @@ class DetectHotWord():
         self.mic.close()
         self.pa.terminate()
         self.handle.delete()
-        # In future, save audio file
 
     
