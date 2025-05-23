@@ -29,14 +29,12 @@ setup(
             'speech_recognizer = fbot_speech_nodes.speech_recognizer:main',
             'speech_recognizer_old = fbot_speech_nodes.speech_recognizer_old:main',
             'detector_hotword_node = fbot_speech_nodes.detector_hotword_node:main',
-            'new_detector_hotword_node = fbot_speech_nodes.new_detector_hotword_node:main',
             'audio_player = fbot_speech_nodes.audio_player:main',
             ],
     },
     scripts=[
         os.path.join('fbot_speech_scripts', 'wav_to_mouth.py'),
         os.path.join('fbot_speech_scripts', 'detect_hotword.py'),
-        os.path.join('fbot_speech_scripts', 'new_detect_hotword.py'),
 
 
     ],
