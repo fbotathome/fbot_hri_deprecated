@@ -11,11 +11,16 @@ class DetectHotWord():
     This class initializes the Porcupine library with the specified hotword paths and sensitivities.
     It also handles audio input from the microphone and processes the audio frames to detect hotwords.
     """
-    def __init__(self, keyword_path: list[str], sensitivity: float, library_path: str = None, model_path: str = None):
+    def __init__(self,
+                keyword_path: list[str],
+                sensitivity: float,
+                library_path: str = None,
+                model_path: str = None):
         """
         @brief Initialize the hotword detector.
         @param keyword_path: List of paths to the hotword models.
-        @param sensitivity: Sensitivity for hotword detection (0.0 to 1.0).
+        @param sensitivity: Sensitivities for detecting keywords. Each value should be a number within [0, 1]. A higher
+        sensitivity results in fewer misses at the cost of increasing the false alarm rate. If not set 0.5 will be used.
         @param library_path: Path to the Porcupine library (optional).
         @param model_path: Path to the Porcupine model (optional).
         """

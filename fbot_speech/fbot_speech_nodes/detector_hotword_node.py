@@ -33,7 +33,7 @@ class HotwordDetectorNode(Node):
 
         while rclpy.ok():
             result = self.detector.process()
-            if result>=0:
+            if result >= 0:
                 keyword_output = String()
                 keyword_output.data = self.keyword[result]
                 self.get_logger().info(f"Hotword Detected: {keyword_output.data}")
