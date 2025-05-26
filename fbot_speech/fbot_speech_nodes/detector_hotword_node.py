@@ -19,7 +19,6 @@ class HotwordDetectorNode(Node):
         ws_dir = os.path.abspath(os.path.join(get_package_share_directory('fbot_behavior'), '../../../..'))
         self.pack_dir = os.path.join(ws_dir, "src", "fbot_hri", "fbot_speech",'resources')
 
-        # self.declareWordParameters()
         self.declareParameters()
         self.readParameters()
         self.initRosComm()
