@@ -89,7 +89,7 @@ class NeckController(Node):
         self.look_at_timeout = float("inf")
         self.lookat_timer = None 
         self.lookat_timeout_callback = None
-
+        self.frame = 'map'
 
         self.initial_angle = [180.0, 180.0]
         self.updateNeck(self.initial_angle)
