@@ -91,6 +91,7 @@ class NeckController(Node):
         self.lookat_timeout_callback = None
         self.frame = 'map'
 
+        self.current_angle = [0.0, 0.0]
         self.initial_angle = [180.0, 180.0]
         self.updateNeck(self.initial_angle)
 
@@ -146,7 +147,6 @@ class NeckController(Node):
         @param data: (list[float]) The list of angles for the neck joints.
         @param from_updateNeckCallback: (bool) Whether the update was triggered by a callback (default: False).
         """
-
         if data:
             pos_horizontal = np.radians(min(self.motors_config['horizontal_neck_joint']['max_angle'], max(self.motors_config['horizontal_neck_joint']['min_angle'], data[0])))
             pos_vertical = np.radians(min(self.motors_config['vertical_neck_joint']['max_angle'], max(self.motors_config['vertical_neck_joint']['min_angle'], data[1])))
@@ -163,6 +163,8 @@ class NeckController(Node):
 
             for key in self.motors:
                 self.motors[key].sendGoalAngle(self.motors_config[key]['current_angle'])
+                self.current_angle = data
+                self.get_logger().info(f'Writing angles to motors: {self.current_angle}')
 
             self.updateJointsDict()
 
@@ -200,7 +202,7 @@ class NeckController(Node):
         else:
             self.last_stopped_time = None
 
-    def computeTFTransform(self, target_frame='camera_link_static', source_header=None, lastest=False):
+    def computeTFTransform(self, source_header=None, target_frame='camera_link_static', lastest=False):
         """
         @brief Computes the transform between two frames.
         @param target_frame: (str) The target frame ID.
@@ -210,7 +212,7 @@ class NeckController(Node):
         if not source_header:
             self.get_logger().error('source_header parameter was not given.')
             return
-        
+        transform= None    
         try:
             transform = self.tf_buffer.lookup_transform(
                 target_frame, source_header.frame_id, rclpy.time.Time() if lastest else source_header.stamp)
@@ -227,7 +229,7 @@ class NeckController(Node):
         """
         horizontal = math.pi + math.atan2(point.y, point.x)
         dist = np.hypot(point.x, point.y)
-        vertical = math.pi + math.atan2(point.z, dist)
+        vertical = math.pi + math.atan2(point.z, dist) #ajuste vertical 
         return [math.degrees(horizontal), math.degrees(vertical)]
 
     def lookAtStart(self, req : LookAtDescription3D.Request, res : LookAtDescription3D.Response): 
@@ -236,7 +238,7 @@ class NeckController(Node):
         @param req: (std_srvs.srv.Empty.Request) The service request.
         """
         self.lookat_description_identifier = {'global_id': req.global_id, 'id': req.id, 'label': req.label}
-        self.get_logger().info(f"Starting lookAt with identifier: {self.lookat_description_identifier}")
+        self.get_logger().info(f"Starting lookAt with description: {self.lookat_description_identifier}")
         self.sub_lookat = self.create_subscription(Detection3DArray, req.recognitions3d_topic, self.lookAtRecogCallback, 10)
         self.last_pose  = None
         self.last_pose_time = 0.
@@ -255,27 +257,29 @@ class NeckController(Node):
         @brief Callback for processing recognition messages and updating the neck position.
         @param msg: (fbot_vision_msgs.msg.Detection3DArray) The message containing the detected objects.
         """
-        self.get_logger().info("Processing lookAtRecogCallback...")
         selected_desc = self.selectDescription(msg.detections)
 
         if selected_desc is not None:
-            self.get_logger().info(f"Selected description: {selected_desc.label} with ID: {selected_desc.id}")
             header = selected_desc.header
-            self.get_logger().info(f"Header frame ID: {header.frame_id}, Stamp: {header.stamp}, last_stopped_time: {self.last_stopped_time}")
             if self.last_stopped_time is not None and Time.from_msg(header.stamp) >= Time.from_msg(self.last_stopped_time):
-                transform = self.computeTFTransform(header, to_frame_id=self.frame)
+                transform = self.computeTFTransform(header, self.frame)
 
                 lookat_pose = PoseStamped()
                 lookat_pose.header = header
                 lookat_pose.pose = selected_desc.bbox3d.center
 
-                self.lookat_pose = tf2_geometry_msgs.do_transform_pose(lookat_pose, transform)
-
+                self.lookat_pose = tf2_geometry_msgs.do_transform_pose_stamped(lookat_pose, transform)
+                                    
                 if self.lookat_timer:
                     self.lookat_timer.reset()
 
                 transform = self.computeTFTransform(self.lookat_pose.header, lastest=True)
-                ps = tf2_geometry_msgs.do_transform_pose(self.lookat_pose, transform).pose.position
+                if not transform:
+                    self.get_logger().error("Transform not found, cannot compute look at point.")
+                    self.lookat_pose = None
+                    return
+                
+                ps = tf2_geometry_msgs.do_transform_pose_stamped(self.lookat_pose, transform).pose.position
 
                 distance = 0.
                 time = self.get_clock().now().nanoseconds / 1e9
@@ -285,12 +289,14 @@ class NeckController(Node):
                     previus = np.array([self.last_pose.x, self.last_pose.y, self.last_pose.z])
                     distance = np.linalg.norm(new - previus)
                     delta = time - self.last_pose_time
-                self.get_logger().info(f"Distance: {distance}, Delta: {delta}, Time: {time}")
-                self.get_logger().info(f"distance<{max(1.5 * delta, 1.5)}")
+
                 if distance < max(1.5 * delta, 1.5):
                     lookat_neck = self.computeNeckStateByPoint(ps)
                     self.last_pose = deepcopy(ps)
-                    self.updateNeck(lookat_neck)
+                    # self.get_logger().info(f'difference: {abs(lookat_neck[0] - self.current_angle[0] + lookat_neck[1] - self.current_angle[1])}')
+                    if abs(lookat_neck[0] - self.current_angle[0] + lookat_neck[1] - self.current_angle[1]) > 1.5:
+                        lookat_neck[1] = lookat_neck[1] + 15.0 # Adjust vertical angle to avoid looking down too much
+                        self.updateNeck(lookat_neck)
 
                 self.last_pose_time = time
                 self.lookat_pose = None
@@ -340,14 +346,15 @@ class NeckController(Node):
 
         return desc
 
-    def lookAtStop(self, req):
+    def lookAtStop(self, req: Empty.Request, res: Empty.Response):
         """
         @brief Stops the "look at" service and resets the neck position.
         @param req: (std_srvs.srv.Empty.Request) The service request.
         """
         if self.sub_lookat is not None:
-            self.sub_lookat.unregister()
+            self.destroy_subscription(self.sub_lookat)
             self.sub_lookat = None
+            self.updateNeck(self.initial_angle)
 
         if self.lookat_timer is not None:
             self.lookat_timer.cancel()
@@ -355,7 +362,7 @@ class NeckController(Node):
         
         self.lookat_description_identifier = None
 
-        return Empty.Response()
+        return res
 
 def main(args=None):
     rclpy.init(args=args)
