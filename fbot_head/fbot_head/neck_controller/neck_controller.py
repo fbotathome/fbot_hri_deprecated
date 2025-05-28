@@ -5,6 +5,7 @@ import numpy as np
 import tf2_geometry_msgs
 from copy import deepcopy
 from rclpy.node import Node
+from rclpy.time import Time
 from std_srvs.srv import Empty
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Bool, Float64MultiArray
@@ -194,6 +195,7 @@ class NeckController(Node):
 
         if (self.joints_dict['head_pan_joint'][1]<=0.3) and (self.joints_dict['head_tilt_joint'][1]<=0.3):
             if self.last_stopped_time is None:
+                self.get_logger().info(f"last_stopped_time was None, setting to current time {msg.header.stamp}")
                 self.last_stopped_time = msg.header.stamp
         else:
             self.last_stopped_time = None
@@ -214,7 +216,7 @@ class NeckController(Node):
                 target_frame, source_header.frame_id, rclpy.time.Time() if lastest else source_header.stamp)
             
         except Exception as e:
-            self.node.get_logger().error(f"Transform lookup failed: {str(e)}")
+            self.get_logger().error(f"Transform lookup failed: {str(e)}")
     
         return transform
     
@@ -228,41 +230,44 @@ class NeckController(Node):
         vertical = math.pi + math.atan2(point.z, dist)
         return [math.degrees(horizontal), math.degrees(vertical)]
 
-    def lookAtStart(self, req : LookAtDescription3D.Request): 
+    def lookAtStart(self, req : LookAtDescription3D.Request, res : LookAtDescription3D.Response): 
         """
         @brief Stops the "look at" service and resets the neck position.
         @param req: (std_srvs.srv.Empty.Request) The service request.
         """
         self.lookat_description_identifier = {'global_id': req.global_id, 'id': req.id, 'label': req.label}
-        self.sub_lookat = self.create_subscription(Detection3DArray, req.recognitions3d_topic, self.lookAtRecogCallback, 10, queue_size=1)
+        self.get_logger().info(f"Starting lookAt with identifier: {self.lookat_description_identifier}")
+        self.sub_lookat = self.create_subscription(Detection3DArray, req.recognitions3d_topic, self.lookAtRecogCallback, 10)
         self.last_pose  = None
         self.last_pose_time = 0.
         self.lookat_pose = None
-        self.last_stopped_time = None
+        # self.last_stopped_time = None
         self.look_at_timeout = float("inf") if req.timeout == 0 else req.timeout
 
         if self.lookat_timer:
             self.lookat_timer.cancel() 
         self.lookat_timer = self.create_timer(self.look_at_timeout, self.lookAtTimeout)
 
-        return LookAtDescription3D.Response()
+        return res
 
     def lookAtRecogCallback(self, msg):
         """
         @brief Callback for processing recognition messages and updating the neck position.
         @param msg: (fbot_vision_msgs.msg.Detection3DArray) The message containing the detected objects.
         """
-        selected_desc = self.selectDescription(msg.descriptions)
+        self.get_logger().info("Processing lookAtRecogCallback...")
+        selected_desc = self.selectDescription(msg.detections)
 
         if selected_desc is not None:
-
-            header = selected_desc.poses_header
-            if self.last_stopped_time is not None and header.stamp >= self.last_stopped_time:
+            self.get_logger().info(f"Selected description: {selected_desc.label} with ID: {selected_desc.id}")
+            header = selected_desc.header
+            self.get_logger().info(f"Header frame ID: {header.frame_id}, Stamp: {header.stamp}, last_stopped_time: {self.last_stopped_time}")
+            if self.last_stopped_time is not None and Time.from_msg(header.stamp) >= Time.from_msg(self.last_stopped_time):
                 transform = self.computeTFTransform(header, to_frame_id=self.frame)
 
                 lookat_pose = PoseStamped()
                 lookat_pose.header = header
-                lookat_pose.pose = selected_desc.bbox.center
+                lookat_pose.pose = selected_desc.bbox3d.center
 
                 self.lookat_pose = tf2_geometry_msgs.do_transform_pose(lookat_pose, transform)
 
@@ -280,7 +285,8 @@ class NeckController(Node):
                     previus = np.array([self.last_pose.x, self.last_pose.y, self.last_pose.z])
                     distance = np.linalg.norm(new - previus)
                     delta = time - self.last_pose_time
-                
+                self.get_logger().info(f"Distance: {distance}, Delta: {delta}, Time: {time}")
+                self.get_logger().info(f"distance<{max(1.5 * delta, 1.5)}")
                 if distance < max(1.5 * delta, 1.5):
                     lookat_neck = self.computeNeckStateByPoint(ps)
                     self.last_pose = deepcopy(ps)
@@ -305,7 +311,7 @@ class NeckController(Node):
         min_desc = None
         min_dist = float('inf')
         for desc in descriptions:
-            p = desc.bbox.center.position
+            p = desc.bbox3d.center.position
             dist = np.linalg.norm([p.x, p.y, p.z])
             if dist < min_dist:
                 min_desc = desc
