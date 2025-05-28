@@ -1,2 +1,4 @@
 sounddevice
 termcolor
+playsound
+realtimeSTT
