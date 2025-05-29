@@ -84,6 +84,13 @@ class SpeechRecognizerNode(Node):
         playsound(self.pack_dir + '/beep.wav')
 
     def handleRecognition(self, req: SpeechToText.Request, response: SpeechToText.Response):
+        """
+        @brief Handle the speech recognition request. 
+        This function starts the audio recorder, performs speech recognition, and returns the recognized text.
+        It also implements a Voice Activity Detection (VAD) mechanism to stop listening after a certain timeout.
+        @param req: The request object containing the parameters for speech recognition.
+        @param response: The response object to be filled with the recognized text.
+        """
         self.get_logger().info("Handling recognition request...")
 
         # Variable to store the start time of VAD detection
