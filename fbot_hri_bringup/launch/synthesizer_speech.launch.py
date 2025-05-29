@@ -56,55 +56,6 @@ def generate_launch_description():
         description='Path to the tts parameter file'
     )
 
-    audio_config_file_path = PathJoinSubstitution([
-        get_package_share_directory('fbot_hri_bringup'),
-        'config',
-        'fbot_audio_player.yaml'
-    ])
-
-    audio_config_file_remote_path =  PathJoinSubstitution([
-        FindPackageShareRemote(remote_install_space='/home/jetson/jetson_ws/install', package='fbot_hri_bringup'),
-        'config',
-        'fbot_audio_player.yaml']
-    )
-
-    audio_config_file_arg = DeclareLaunchArgument(
-        'audio_config',
-        default_value=audio_config_file_path,
-        description='Path to the audio_player parameter file'
-    )
-
-    audio_config_file_remote_arg = DeclareLaunchArgument(
-        'audio_config',
-        default_value=audio_config_file_remote_path,
-        description='Path to the audio_player parameter file'
-    )
-
-    audio_player_remote_node = NodeRemoteSSH(
-        name='audio_player_node', 
-        package='fbot_speech', 
-        executable='audio_player',
-        parameters=[LaunchConfiguration('ros_config'),
-                    LaunchConfiguration('audio_config') 
-                    ],
-        user='jetson',
-        machine="jetson",
-        source_paths=[
-            "/home/jetson/jetson_ws/install/setup.bash"
-        ],
-        condition=IfCondition(LaunchConfiguration('use_remote'))
-    )
-
-    audio_player_node = Node(
-        name='audio_player_node', 
-        package='fbot_speech', 
-        executable='audio_player',
-        parameters=[LaunchConfiguration('ros_config'),
-                    LaunchConfiguration('audio_config') 
-                    ],
-        condition=UnlessCondition(LaunchConfiguration('use_remote'))
-    )
-
     speech_synthesizer_remote_node = NodeRemoteSSH(
         name='speech_synthesizer_node',
         package='fbot_speech', 
@@ -133,12 +84,8 @@ def generate_launch_description():
     return LaunchDescription([
         ros_config_file_arg,
         ros_config_file_remote_arg,
-        audio_config_file_arg,audio_config_file_arg,
-        audio_config_file_remote_arg,
         tts_config_file_arg,
         tts_config_file_remote_arg,
-        audio_player_node,
-        audio_player_remote_node,
         speech_synthesizer_remote_node,
         speech_synthesizer_node
     ])
