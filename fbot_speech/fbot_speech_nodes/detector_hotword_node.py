@@ -36,7 +36,7 @@ class HotwordDetectorNode(Node):
                 keyword_output = String()
                 keyword_output.data = self.keyword[result]
                 self.get_logger().info(f"Hotword Detected: {keyword_output.data}")
-                self.detector_publisher.publish(keyword_output)
+                self.hotword_detector_publisher.publish(keyword_output)
 
     def initRosComm(self):
         """
