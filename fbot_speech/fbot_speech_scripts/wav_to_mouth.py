@@ -74,11 +74,9 @@ class WavToMouth(Node):
                 return
             self.streaming = True
             self.request_stream_stop = False
-
             if self.stream is None:
                 self.stream = sd.OutputStream(
-                    device = 'pulse',
-                    samplerate=self.sample_rate,
+                    device = 'HyperX Amp: USB Audio (hw:2,0)',
                     channels=self.channels,
                     callback=self.audioCallback,
                     blocksize=self.chunk_size,

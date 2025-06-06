@@ -21,7 +21,7 @@ def generate_launch_description():
     )
 
     ros_config_file_remote_arg = DeclareLaunchArgument(
-        'ros_config',
+        'ros_config_remote',
         default_value=ros_config_path_remote,
         description='Path to the ros parameter file'
     )
@@ -45,7 +45,7 @@ def generate_launch_description():
     )
 
     tts_config_file_remote_arg = DeclareLaunchArgument(
-        'tts_config',
+        'tts_config_remote',
         default_value=tts_config_file_path_remote,
         description='Path to the tts parameter file'
     )
@@ -75,7 +75,7 @@ def generate_launch_description():
     )
 
     audio_config_file_remote_arg = DeclareLaunchArgument(
-        'audio_config',
+        'audio_config_remote',
         default_value=audio_config_file_remote_path,
         description='Path to the audio_player parameter file'
     )
@@ -84,8 +84,8 @@ def generate_launch_description():
         name='audio_player_node', 
         package='fbot_speech', 
         executable='audio_player',
-        parameters=[LaunchConfiguration('ros_config'),
-                    LaunchConfiguration('audio_config') 
+        parameters=[LaunchConfiguration('ros_config_remote'),
+                    LaunchConfiguration('audio_config_remote') 
                     ],
         user='jetson',
         machine="jetson",
@@ -109,8 +109,8 @@ def generate_launch_description():
         name='speech_synthesizer_node',
         package='fbot_speech', 
         executable='speech_synthesizer',
-        parameters=[LaunchConfiguration('ros_config'),
-                    LaunchConfiguration('tts_config')
+        parameters=[LaunchConfiguration('ros_config_remote'),
+                    LaunchConfiguration('tts_config_remote')
                     ],
         user='jetson',
         machine="jetson",
