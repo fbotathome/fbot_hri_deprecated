@@ -77,6 +77,7 @@ class WavToMouth(Node):
 
             if self.stream is None:
                 self.stream = sd.OutputStream(
+                    device = 'pulse',
                     samplerate=self.sample_rate,
                     channels=self.channels,
                     callback=self.audioCallback,
