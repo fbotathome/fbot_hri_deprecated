@@ -1,17 +1,11 @@
-import rclpy
 from rclpy.node import Node
-import audioop
 import os
 import wave
-import rospkg
 import numpy as np
 import struct
 import sounddevice as sd
 from std_msgs.msg import Int16MultiArray, Int16
 from threading import Lock, Event
-
-#fbot_SPEECH_PKG = rospkg.RosPack().get_path("fbot_speech")
-#AUDIO = os.path.join(fbot_SPEECH_PKG, "audios/")
 
 def mapRange(x, in_min, in_max, out_min, out_max):
     return (x - in_min) * (out_max - out_min) // (in_max - in_min) + out_min
@@ -19,10 +13,21 @@ def mapRange(x, in_min, in_max, out_min, out_max):
 class WavToMouth(Node):
 
     def __init__(self):
-        super().__init__('wav_to_mouth')  # ROS 2 requires a node name
+        super().__init__('wav_to_mouth')
         
         self.chunk_size = self.get_parameter_or("chunk_size", 2048)
 
+        try:
+            for device in sd.query_devices():
+                if device['name'] == 'K66: USB Audio (hw:1,0)':
+                    #
+                    #ADD JETSON AUDIO DEVICE NAME HERE
+                    #
+                    #
+                    self.device_index = device['index']
+        except:
+            self.get_logger().error("Audio device not found. Please check your audio setup.")
+            self.device_index = 25  # Default device index if not found
 
         self.data = []
         self.data_lock = Lock()  # To ensure thread-safe access to self.data
@@ -76,7 +81,7 @@ class WavToMouth(Node):
             self.request_stream_stop = False
             if self.stream is None:
                 self.stream = sd.OutputStream(
-                    device = 'HyperX Amp: USB Audio (hw:2,0)',
+                    device = self.device_index,
                     channels=self.channels,
                     callback=self.audioCallback,
                     blocksize=self.chunk_size,
