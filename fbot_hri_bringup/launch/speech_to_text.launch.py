@@ -28,7 +28,7 @@ def generate_launch_description():
     )
 
     ros_config_file_remote_arg = DeclareLaunchArgument(
-        'ros_config',
+        'ros_config_remote',
         default_value=ros_config_path_remote,
         description='Path to the ros parameter file'
     )
@@ -51,7 +51,7 @@ def generate_launch_description():
     )
 
     challenge_config_remote = DeclareLaunchArgument(
-        'challenge_config', 
+        'challenge_config_remote', 
         default_value=challenge_config_path_remote,
         description='Path to the challenge parameter file'
     )
@@ -70,8 +70,8 @@ def generate_launch_description():
         name='speech_recognizer_node',
         package='fbot_speech',
         executable='speech_recognizer',
-        parameters=[LaunchConfiguration('ros_config'),
-                    LaunchConfiguration('challenge_config')
+        parameters=[LaunchConfiguration('ros_config_remote'),
+                    LaunchConfiguration('challenge_config_remote')
                     ],
         user='jetson',
         machine="jetson",
