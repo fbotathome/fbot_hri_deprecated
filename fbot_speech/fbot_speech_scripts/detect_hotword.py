@@ -4,7 +4,9 @@ import struct
 import pyaudio
 import pvporcupine
 
-access_key="Tbyk0dhsux2oYz/+GO8IGk05dCGmhTVze760CdDlA/vfLjkuGCqdRQ==" 
+#access_key="Tbyk0dhsux2oYz/+GO8IGk05dCGmhTVze760CdDlA/vfLjkuGCqdRQ==" 
+access_key = "IOI/v3Jkh0zwgEL5MEC2I0Dn/BVDZ8zfcQdFJhiYntRGFLf37F2gqw=="
+
 class DetectHotWord():
     """
     @brief Class for detecting hotwords using Porcupine.

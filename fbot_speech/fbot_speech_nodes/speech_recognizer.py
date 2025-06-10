@@ -2,95 +2,58 @@
 # -*- coding: utf-8 -*-
 
 import rclpy
+from rclpy.node import Node
+from std_srvs.srv import Empty
+from fbot_speech_msgs.srv import SpeechToText
 import os
 import threading
 import time
-from rclpy.node import Node
-
-from fbot_speech_msgs.srv import SpeechToText
-from ament_index_python.packages import get_package_share_directory
 from playsound import playsound
+
 from RealtimeSTT import AudioToTextRecorder
 
 DEFAULT_LANGUAGE = 'en'
+PACK_DIR = os.path.join(os.path.expanduser("~"), 'ros_workspace', 'src', 'fbot_speech')
+AUDIO_DIR = os.path.join(PACK_DIR, "audios/")
+TALK_AUDIO = os.path.join(AUDIO_DIR, "beep.wav")
 
 
 class SpeechRecognizerNode(Node):
     def __init__(self):
         super().__init__('speech_recognizer')
-        ws_dir = os.path.abspath(os.path.join(get_package_share_directory('fbot_behavior'), '../../../..'))
-        self.pack_dir = os.path.join(ws_dir, "src", "fbot_hri", "fbot_speech",'audios')
 
-        self.declareParameters()
-        self.readParameters()
-        self.initRosComm()
+        # Declare parameters
+        self.default_configs = {
+            "spinner": False,
+            "model": "distil-medium.en",
+            "silero_sensitivity": 0.8,
+            "device": "cpu",
+            "webrtc_sensitivity": 1,
+            "post_speech_silence_duration": 1.0,
+            "min_length_of_recording": 3,
+            "min_gap_between_recordings": 0,
+            "enable_realtime_transcription": False,
+            "silero_deactivity_detection": True,
+        }
 
-        self.recorder =  AudioToTextRecorder(**self.stt_configs)
+        # Fetch configurations
+        self.configs = self.get_parameter_or("stt_configs", self.default_configs)
+        self.stt_mic_timeout = self.get_parameter_or("stt_mic_timeout", 10)
+
+        # Setup the service
+        recognizer_service_param = self.get_parameter_or("services/speech_recognizer/service", "/fbot_speech/sr/speech_recognizer")
+        self.speech_recognition_service = self.create_service(SpeechToText, recognizer_service_param, self.handleRecognition)
+
+        # Global recorder variable
+        self.recorder =  AudioToTextRecorder(**self.configs)
 
         self.get_logger().info("Speech Recognizer is on!")
 
-    def initRosComm(self):
-        """
-        @brief Initialize ROS communication for the node.
-        This function sets up the publisher and subscriber for speech recognition.
-        """
-        # Create service
-        self.speech_recognition_service = self.create_service(SpeechToText, self.recognizer_service_param, self.handleRecognition)
-
-    def declareParameters(self):
-        """
-        @brief Declare parameters for the node.
-        """
-        self.declare_parameter('stt_configs.compute_type', 'float16')
-        self.declare_parameter('stt_configs.spinner', False)
-        self.declare_parameter('stt_configs.model', 'distil-medium.en')
-        self.declare_parameter('stt_configs.silero_sensitivity', 0.8)
-        self.declare_parameter('stt_configs.device', 'cpu')
-        self.declare_parameter('stt_configs.webrtc_sensitivity', 1)
-        self.declare_parameter('stt_configs.post_speech_silence_duration', 1.0)
-        self.declare_parameter('stt_configs.min_length_of_recording', 3.0)
-        self.declare_parameter('stt_configs.min_gap_between_recordings', 0)
-        self.declare_parameter('stt_configs.enable_realtime_transcription', False)
-        self.declare_parameter('stt_configs.silero_deactivity_detection', True)
-        self.declare_parameter('stt_configs.initial_prompt', '')
-        self.declare_parameter('stt_mic_timeout', 10)
-        self.declare_parameter('services.speech_recognizer.service', '/fbot_speech/sr/speech_recognizer')
-
-    def readParameters(self):
-        """
-        @brief Read parameters from the ROS parameter server.
-        """
-        self.recognizer_service_param = self.get_parameter('services.speech_recognizer.service').get_parameter_value().string_value
-        self.stt_mic_timeout = self.get_parameter('stt_mic_timeout').get_parameter_value().integer_value
-        self.stt_configs = {
-            "spinner": self.get_parameter('stt_configs.spinner').get_parameter_value().bool_value,
-            "model": self.get_parameter('stt_configs.model').get_parameter_value().string_value,
-            "silero_sensitivity": self.get_parameter('stt_configs.silero_sensitivity').get_parameter_value().double_value,
-            "device": self.get_parameter('stt_configs.device').get_parameter_value().string_value,
-            "webrtc_sensitivity": self.get_parameter('stt_configs.webrtc_sensitivity').get_parameter_value().integer_value,
-            "post_speech_silence_duration": self.get_parameter('stt_configs.post_speech_silence_duration').get_parameter_value().double_value,
-            "min_length_of_recording": self.get_parameter('stt_configs.min_length_of_recording').get_parameter_value().double_value,
-            "min_gap_between_recordings": self.get_parameter('stt_configs.min_gap_between_recordings').get_parameter_value().double_value,
-            "enable_realtime_transcription": self.get_parameter('stt_configs.enable_realtime_transcription').get_parameter_value().bool_value,
-            "silero_deactivity_detection": self.get_parameter('stt_configs.silero_deactivity_detection').get_parameter_value().bool_value,
-            "initial_prompt": self.get_parameter('stt_configs.initial_prompt').get_parameter_value().string_value,
-            "compute_type": self.get_parameter('stt_configs.compute_type').get_parameter_value().string_value,
-        }
-
     def delayStarterRecorder(self):
-        """
-        @brief Delay the start of the recorder to allow for VAD detection."""
         time.sleep(0.5)
-        playsound(self.pack_dir + '/beep.wav')
+        playsound('/home/fbot/fbot_ws/src/fbot_hri/fbot_speech/audios/beep.wav')
 
     def handleRecognition(self, req: SpeechToText.Request, response: SpeechToText.Response):
-        """
-        @brief Handle the speech recognition request. 
-        This function starts the audio recorder, performs speech recognition, and returns the recognized text.
-        It also implements a Voice Activity Detection (VAD) mechanism to stop listening after a certain timeout.
-        @param req: The request object containing the parameters for speech recognition.
-        @param response: The response object to be filled with the recognized text.
-        """
         self.get_logger().info("Handling recognition request...")
 
         # Variable to store the start time of VAD detection
@@ -99,7 +62,7 @@ class SpeechRecognizerNode(Node):
         def check_vad_time(recorder):
             while True:
                 seconds_pass = (time.time() - vad_start_time[0])
-                if vad_start_time[0] is not None and seconds_pass > self.stt_mic_timeout or response.text != '':
+                if vad_start_time[0] is not None and seconds_pass > self.stt_mic_timeout:
                     self.get_logger().info(f"Stopping listening, too long... {seconds_pass:.1f}s")
                     recorder.stop()
                     recorder.abort()
