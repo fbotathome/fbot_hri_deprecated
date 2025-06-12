@@ -2,12 +2,12 @@ emotions_bridge:
   ros__parameters:
 
       eyebrow_left_vert:
-        pin: 2
+        pin: 0
         start_angle: 10
         final_angle: 150
         type: 'percentual'
 
-        neutral: 65
+        neutral: 100
         happy: 22
         sad: 105
         surprised: 15
