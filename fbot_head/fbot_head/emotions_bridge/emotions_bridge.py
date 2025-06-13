@@ -19,7 +19,7 @@ class EmotionsBridge(Node):
         super().__init__('emotions_bridge')
 
         try:
-            self.serial = serial.Serial('/dev/ttyUSB1')
+            self.serial = serial.Serial('/dev/ttyUSB0')
         except serial.SerialException as e:
             self.get_logger().error(f"Serial port error: {e}")
             return
@@ -113,6 +113,10 @@ class EmotionsBridge(Node):
         @brief Retrieves motor values for the given emotion and sends them as a JSON-encoded string via serial communication.
         @param emotion: (str) The emotion to be sent.  
         """
+        if self.motors is None:
+            self.get_logger().error("Motors configuration not loaded. Cannot send emotion.")
+            return
+
         log_message = ''
 
         motors_dict = {
@@ -120,6 +124,10 @@ class EmotionsBridge(Node):
         }
 
         for motor in self.motors:
+            if not self.has_parameter(motor+'.'+emotion):
+                self.get_logger().error(f"Parameter '{motor}.{emotion}' not declared. Cannot send emotion to motor '{motor}'.")
+                return
+            
             write_msg = [motor, self.get_parameter(motor+'.'+emotion).value] #opção sem namespace
 
             motors_dict[motor] = write_msg[1]

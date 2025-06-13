@@ -17,7 +17,7 @@ emotions_bridge:
 
 
       eyebrow_right_vert: 
-        pin: 4
+        pin: 3
         start_angle: 30
         final_angle: 150
         type: 'percentual'
@@ -32,7 +32,7 @@ emotions_bridge:
 
 
       eyebrow_left_rot:
-        pin: 5
+        pin: 4
         start_angle: 80
         final_angle: 180
         type: 'rawangle'
@@ -47,7 +47,7 @@ emotions_bridge:
 
 
       eyebrow_right_rot:
-        pin: 12
+        pin: 7
         start_angle: 110
         final_angle: 180
         type: 'rawangle'

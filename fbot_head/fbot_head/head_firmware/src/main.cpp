@@ -41,18 +41,18 @@ void setup() {
   pca9685.begin();
   pca9685.setPWMFreq(50); // Set frequency to 50 Hz
 
-  // preferences.begin("storage", false);
+  preferences.begin("storage", false);
   
-  // String stored_config = preferences.getString("json_config", "");
+  String stored_config = preferences.getString("json_config", "");
 
-  // if(!stored_config.isEmpty()){
+  if(!stored_config.isEmpty()){
 
-  //   clearMotors();
-  //   JsonDocument json_doc = stringToJsonObject(stored_config);
-  //   JsonObject json_obj = json_doc.as<JsonObject>();
-  //   motors = configureMotors(json_obj);
+    clearMotors();
+    JsonDocument json_doc = stringToJsonObject(stored_config);
+    JsonObject json_obj = json_doc.as<JsonObject>();
+    motors = configureMotors(json_obj);
 
-  // }
+  }
 
 }
 
