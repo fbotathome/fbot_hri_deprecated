@@ -202,7 +202,7 @@ class NeckController(Node):
         else:
             self.last_stopped_time = None
 
-    def computeTFTransform(self, source_header=None, target_frame='camera_link_static', lastest=False):
+    def computeTFTransform(self, source_header=None, target_frame='camera_link_static', lastest=True):
         """
         @brief Computes the transform between two frames.
         @param target_frame: (str) The target frame ID.
@@ -244,7 +244,7 @@ class NeckController(Node):
         self.last_pose_time = 0.
         self.lookat_pose = None
         # self.last_stopped_time = None
-        self.look_at_timeout = float("inf") if req.timeout == 0 else req.timeout
+        self.look_at_timeout = 10*60.0 if req.timeout == 0 else req.timeout
 
         if self.lookat_timer:
             self.lookat_timer.cancel() 
@@ -258,6 +258,7 @@ class NeckController(Node):
         @param msg: (fbot_vision_msgs.msg.Detection3DArray) The message containing the detected objects.
         """
         selected_desc = self.selectDescription(msg.detections)
+        self.get_logger().info(f"Receveid detection: {selected_desc}")
 
         if selected_desc is not None:
             header = selected_desc.header
@@ -291,12 +292,15 @@ class NeckController(Node):
                     delta = time - self.last_pose_time
 
                 if distance < max(1.5 * delta, 1.5):
+                    self.get_logger().info(f"Distance to last pose: {distance}, delta time: {delta}")
                     lookat_neck = self.computeNeckStateByPoint(ps)
                     self.last_pose = deepcopy(ps)
                     # self.get_logger().info(f'difference: {abs(lookat_neck[0] - self.current_angle[0] + lookat_neck[1] - self.current_angle[1])}')
                     if abs(lookat_neck[0] - self.current_angle[0] + lookat_neck[1] - self.current_angle[1]) > 1.5:
-                        lookat_neck[1] = lookat_neck[1] + 15.0 # Adjust vertical angle to avoid looking down too much
+                        # lookat_neck[1] = lookat_neck[1] + 15.0 # Adjust vertical angle to avoid looking down too much
                         self.updateNeck(lookat_neck)
+                else:
+                    self.get_logger().info(f"Distance to last pose: {distance} is too high, not updating neck position. delta: {delta}")
 
                 self.last_pose_time = time
                 self.lookat_pose = None
