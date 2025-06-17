@@ -31,7 +31,7 @@ class AudioPlayerNode(Node):
         self.readParameters()
         self.initRosComm()
         # Timer to check for stream timeout
-        self.create_timer(1.0, self.checkStreamTimeout)
+        self.create_timer(1.0, self.audioCheckStreamTimeout)
         self.get_logger().info(colored("Audio Player is on!", "green"))
 
     def initRosComm(self):
@@ -41,7 +41,7 @@ class AudioPlayerNode(Node):
         self.audioStreamStartService = self.create_service(AudioStreamStart, self.audio_player_stream_start_service_param, self.audioStreamStart)
         self.audioStreamStopService = self.create_service(Empty, self.audio_player_stream_stop_service_param, self.audioStreamStop)
         # Create subscriber
-        self.audioPlayerTopicSub = self.create_subscription(AudioData, self.audio_player_stream_data_topic_param, self.streamDataCallback, 10)
+        self.audioPlayerTopicSub = self.create_subscription(AudioData, self.audio_player_stream_data_topic_param, self.audioStreamDataCallback, 10)
         
     def declareParameters(self):
         # Declare parameters

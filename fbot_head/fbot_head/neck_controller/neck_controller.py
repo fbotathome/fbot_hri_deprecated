@@ -136,10 +136,14 @@ class NeckController(Node):
         @brief Computes the neck angles required to look at the given point and updates the neck's position.
         @param msg: (geometry_msgs.msg.PointStamped) The message containing the target point.
         """
-        transform = self.computeTFTransform(msg.header)
+        transform = self.computeTFTransform(source_header = msg.header)
+        if not transform:
+            self.get_logger().error("Failed to compute transform for updateNeckByPointCallback.")
+            return
         ps = tf2_geometry_msgs.do_transform_point(msg, transform).point
         angle_msg = self.computeNeckStateByPoint(ps)
         self.updateNeck(angle_msg, from_updateNeckCallback=True)
+        self.get_logger().info(f"Updating neck to look at point with angles: {angle_msg}")
 
     def updateNeck(self, data:list[float], from_updateNeckCallback = False) -> None:
         """
@@ -216,6 +220,7 @@ class NeckController(Node):
         try:
             transform = self.tf_buffer.lookup_transform(
                 target_frame, source_header.frame_id, rclpy.time.Time() if lastest else source_header.stamp)
+            return transform
             
         except Exception as e:
             self.get_logger().error(f"Transform lookup failed: {str(e)}")

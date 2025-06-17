@@ -51,7 +51,7 @@ class SpeechRecognizerNode(Node):
 
     def delayStarterRecorder(self):
         time.sleep(0.5)
-        playsound(TALK_AUDIO)
+        playsound('/home/fbot/fbot_ws/src/fbot_hri/fbot_speech/audios/beep.wav')
 
     def handleRecognition(self, req: SpeechToText.Request, response: SpeechToText.Response):
         self.get_logger().info("Handling recognition request...")
