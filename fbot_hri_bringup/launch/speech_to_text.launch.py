@@ -15,7 +15,7 @@ def generate_launch_description():
 
     challenge_config = DeclareLaunchArgument(
         'challenge_config', 
-        default_value=PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', 'fbot_stt_quiz.yaml']),
+        default_value=PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', LaunchConfiguration('tts_config_file')]),
         description='Path to the challenge parameter file'
     )
 

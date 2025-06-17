@@ -6,9 +6,9 @@ from launch.actions import DeclareLaunchArgument
 
 def generate_launch_description():
 
-    hot_config_file_arg = DeclareLaunchArgument(
-        'hot_config',
-        default_value=PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', 'fbot_hotword_detection.yaml']),
+    hotword_config_arg = DeclareLaunchArgument(
+        'hotword_config',
+        default_value=PathJoinSubstitution([FindPackageShare('fbot_hri_bringup'), 'config', LaunchConfiguration('hotword_config_file')]),
         description='Path to the ros parameter file'
     )
 
@@ -16,11 +16,11 @@ def generate_launch_description():
         name='detector_hotword_node', 
         package='fbot_speech', 
         executable='detector_hotword_node',
-        parameters=[LaunchConfiguration('hot_config'), 
+        parameters=[LaunchConfiguration('hotword_config'), 
                     ]
     )
 
     return LaunchDescription([
-        hot_config_file_arg,
+        hotword_config_arg,
         hotword_node
     ])
