@@ -88,8 +88,11 @@ class SpeechSynthesizerNode(Node):
             audio_player_request.data = audio_data
             audio_player_request.audio_info = audio_info
             future = audio_player_client.call_async(audio_player_request)
-            future.result()
-            response.success = True
+
+            while not future.done():
+              continue
+
+            response = future.result()
             self.get_logger().info(f"Audio data played successfully.")
         
         except Exception as e:
