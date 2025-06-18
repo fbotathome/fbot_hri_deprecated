@@ -93,9 +93,9 @@ class AudioPlayerNode(Node):
         data = request.data.uint8_data
         info = request.audio_info
         self.wm.setDataAndInfo(data, info)
-        self.wm.playAllData()
 
-        response.success = True
+        response.success = self.wm.playAllData()
+        self.get_logger().info(f"AllData: {response}")
         return response
 
     def audioStreamStart(self, request, response):

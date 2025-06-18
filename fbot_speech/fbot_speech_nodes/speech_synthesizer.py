@@ -84,15 +84,17 @@ class SpeechSynthesizerNode(Node):
                 self.get_logger().info(f"Waiting for {self.audio_player_by_data_service_param} service...")
             
             # Create the request and send it
+            response.success = False
             audio_player_request = AudioPlayerByData.Request()
             audio_player_request.data = audio_data
             audio_player_request.audio_info = audio_info
             future = audio_player_client.call_async(audio_player_request)
+            self.get_logger().info(f"Future: {future.result}")
 
-            while not future.done():
+            while not future.result:
               continue
 
-            response = future.result()
+            # response = future
             self.get_logger().info(f"Audio data played successfully.")
         
         except Exception as e:

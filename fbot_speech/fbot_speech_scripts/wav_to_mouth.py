@@ -102,6 +102,7 @@ class WavToMouth(Node):
                 self.stream = None
                 self.get_logger().info("Audio stream stopped.")
             sd.stop()
+            return not self.streaming
 
     def setAudioInfo(self, audio_info):
         self.audio_info = audio_info
@@ -198,4 +199,4 @@ class WavToMouth(Node):
         # Wait until the playback is done
         self.playback_done_event.wait()
         # Stop the stream gracefully
-        self.stopStream()
+        return self.stopStream()
