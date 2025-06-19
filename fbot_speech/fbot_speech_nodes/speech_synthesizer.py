@@ -6,8 +6,10 @@ import riva.client
 from fbot_speech_msgs.srv import AudioPlayerByData, SynthesizeSpeech
 from fbot_speech_msgs.msg import SynthesizeSpeechMessage
 from audio_common_msgs.msg import AudioData, AudioInfo
+from fbot_speech_scripts.wav_to_mouth import WavToMouth
 import rclpy
 from rclpy.node import Node
+from threading import Event
 
 class SpeechSynthesizerNode(Node):
     def __init__(self):
@@ -16,6 +18,8 @@ class SpeechSynthesizerNode(Node):
         self.declareParameters()
         self.readParameters()
         self.initRosComm()
+        self.wm = WavToMouth()
+        self.event = Event()
         auth = riva.client.Auth(uri=self.riva_url)
         self.riva_tts = riva.client.SpeechSynthesisService(auth)
         self.get_logger().info("Speech Synthesizer Node initialized!")
@@ -82,20 +86,35 @@ class SpeechSynthesizerNode(Node):
             
             while not audio_player_client.wait_for_service(timeout_sec=1.0):
                 self.get_logger().info(f"Waiting for {self.audio_player_by_data_service_param} service...")
-            
+    
+
             # Create the request and send it
-            response.success = False
             audio_player_request = AudioPlayerByData.Request()
             audio_player_request.data = audio_data
             audio_player_request.audio_info = audio_info
-            future = audio_player_client.call_async(audio_player_request)
-            self.get_logger().info(f"Future: {future.result}")
+            # from audio_player import AudioPlayerNode as ap
+            # future = ap.audioSpeechFromData(audio_player_request)
+            # future = audio_player_client.call_async(audio_player_request)
+            # future.add_done_callback(unblock)
+            
+            # self.event.wait()
+            # response = future.result()
+            # self.get_logger().info(f"Audio data played successfully.")
+            try:
+                if self.wm.streaming:
+                    response.success = False
+                    return response
 
-            while not future.result:
-              continue
+                data = audio_player_request.data.uint8_data
+                info = audio_player_request.audio_info
+                self.wm.setDataAndInfo(data, info)
 
-            # response = future
-            self.get_logger().info(f"Audio data played successfully.")
+                while self.wm.playAllData() != True:
+                    continue
+                response.success = True
+                self.get_logger().info(f"AllData: {response}")
+            except:
+                response.success = False
         
         except Exception as e:
             response.success = False

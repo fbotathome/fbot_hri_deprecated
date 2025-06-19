@@ -79,24 +79,30 @@ class AudioPlayerNode(Node):
         response.success = True
         return response
         
-    def audioSpeechFromData(self, request, response):
+    def audioSpeechFromData(self, request: AudioPlayerByData.Request, response: AudioPlayerByData.Response):
         """
         @brief Service callback to play audio from raw data.
         This function is called when the service is requested. It sets the audio data and info for the audio player and plays the audio.
         @param request: Request object containing the audio data and info.
         @return: Response object indicating success or failure.
         """
-        if self.wm.streaming:
+        try:
+            if self.wm.streaming:
+                response.success = False
+                return response
+
+            data = request.data.uint8_data
+            info = request.audio_info
+            self.wm.setDataAndInfo(data, info)
+
+            while self.wm.playAllData() != True:
+                continue
+            response.success = True
+            self.get_logger().info(f"AllData: {response}")
+            return response
+        except:
             response.success = False
             return response
-
-        data = request.data.uint8_data
-        info = request.audio_info
-        self.wm.setDataAndInfo(data, info)
-
-        response.success = self.wm.playAllData()
-        self.get_logger().info(f"AllData: {response}")
-        return response
 
     def audioStreamStart(self, request, response):
         """
