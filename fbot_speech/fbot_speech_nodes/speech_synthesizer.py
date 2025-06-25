@@ -92,14 +92,6 @@ class SpeechSynthesizerNode(Node):
             audio_player_request = AudioPlayerByData.Request()
             audio_player_request.data = audio_data
             audio_player_request.audio_info = audio_info
-            # from audio_player import AudioPlayerNode as ap
-            # future = ap.audioSpeechFromData(audio_player_request)
-            # future = audio_player_client.call_async(audio_player_request)
-            # future.add_done_callback(unblock)
-            
-            # self.event.wait()
-            # response = future.result()
-            # self.get_logger().info(f"Audio data played successfully.")
             try:
                 if self.wm.streaming:
                     response.success = False
