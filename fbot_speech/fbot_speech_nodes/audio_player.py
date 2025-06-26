@@ -2,6 +2,7 @@
 
 import time
 import rclpy
+from playsound import playsound
 from rclpy.node import Node
 from fbot_speech_scripts.wav_to_mouth import WavToMouth
 from fbot_speech_msgs.srv import AudioPlayer, AudioPlayerByData, AudioStreamStart
@@ -73,8 +74,7 @@ class AudioPlayerNode(Node):
             return response
 
         filepath = request.audio_path
-        self.wm.setFilepath(filepath)
-        self.wm.playAllData()
+        playsound(filepath)
 
         response.success = True
         return response
