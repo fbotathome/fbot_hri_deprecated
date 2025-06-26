@@ -51,33 +51,26 @@ class SpeechRecognizerNode(Node):
 
     def delayStarterRecorder(self):
         time.sleep(0.5)
-        #playsound('/home/fbot/fbot_ws/src/fbot_hri/fbot_speech/audios/beep.wav')
-        self.get_logger().info("Starting the recorder...")
+        playsound('/home/fbot/fbot_ws/src/fbot_hri/fbot_speech/audios/beep.wav')
+        #self.get_logger().info("Starting the recorder...")
+    
+    def timeout(self):
+        init_time = (self.get_clock().now()).nanoseconds / 1e9
+        while (self.stt_mic_timeout + init_time) > ((self.get_clock().now()).nanoseconds/1e9):
+            continue
+        self.recorder.stop()
+        self.recorder.abort()
+            
 
     def handleRecognition(self, req: SpeechToText.Request, response: SpeechToText.Response):
         self.get_logger().info("Handling recognition request...")
 
-        # Variable to store the start time of VAD detection
-        # vad_start_time = [None]
-
-        # def check_vad_time(recorder):
-        #     while True:
-        #         seconds_pass = (time.time() - vad_start_time[0])
-        #         if vad_start_time[0] is not None and seconds_pass > self.stt_mic_timeout:
-        #             self.get_logger().info(f"Stopping listening, too long... {seconds_pass:.1f}s")
-        #             recorder.stop()
-        #             recorder.abort()
-        #             break
-        #         time.sleep(0.1)
-
-        # # Start VAD checking thread
-        # vad_start_time.__setitem__(0, time.time())
-        # vad_thread = threading.Thread(target=check_vad_time, args=(self.recorder,))
-        # vad_thread.start()
+        timeout = threading.Thread(target=self.timeout)
+        timeout.start()
 
         # Start delayed starter recorder thread
-        thread1 = threading.Thread(target=self.delayStarterRecorder)
-        thread1.start()
+        delay_starter = threading.Thread(target=self.delayStarterRecorder)
+        delay_starter.start()
 
         # Get recognized text
         try:
@@ -93,6 +86,7 @@ class SpeechRecognizerNode(Node):
             pass
 
         # Return the recognized text
+        self.get_logger().info(f"Response: {text}")
         response.text = text
         return response
 
