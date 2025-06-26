@@ -4,13 +4,13 @@ speech_recognizer_node:
       compute_type: "float32"
       spinner: False
       model: "small.en"
-      silero_sensitivity: 0.7
+      silero_sensitivity: 0.6
       device: "cpu"
       webrtc_sensitivity: 1
-      post_speech_silence_duration: 1.0
+      post_speech_silence_duration: 1.5
       min_length_of_recording: 2.0
-      min_gap_between_recordings: 0
+      min_gap_between_recordings: 0.0
       enable_realtime_transcription: False
       silero_deactivity_detection: True
-      initial_prompt: "yes no James Michael Robert John David William Richard Joseph Thomas Christopher Mary Patricia Jennifer Linda Elizabeth Barbara Susan Jessica Karen Sarah"
-    stt_mic_timeout: 4
+      initial_prompt: "James Michael Robert John David William Richard Joseph Thomas Christopher Mary Patricia Jennifer Linda Elizabeth Barbara Susan Jessica Karen Sarah"
+    stt_mic_timeout: 10

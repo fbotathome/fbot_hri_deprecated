@@ -19,39 +19,61 @@ TALK_AUDIO = os.path.join(AUDIO_DIR, "beep.wav")
 
 
 class SpeechRecognizerNode(Node):
-    def __init__(self):
-        super().__init__('speech_recognizer')
-
-        # Declare parameters
-        self.default_configs = {
-            "spinner": False,
-            "model": "distil-medium.en",
-            "silero_sensitivity": 0.8,
-            "device": "cpu",
-            "webrtc_sensitivity": 1,
-            "post_speech_silence_duration": 1.0,
-            "min_length_of_recording": 3,
-            "min_gap_between_recordings": 0,
-            "enable_realtime_transcription": False,
-            "silero_deactivity_detection": True,
-        }
-
-        # Fetch configurations
-        self.configs = self.get_parameter_or("stt_configs", self.default_configs)
-        self.stt_mic_timeout = self.get_parameter_or("stt_mic_timeout", 10)
-
-        # Setup the service
-        recognizer_service_param = self.get_parameter_or("services/speech_recognizer/service", "/fbot_speech/sr/speech_recognizer")
-        self.speech_recognition_service = self.create_service(SpeechToText, recognizer_service_param, self.handleRecognition)
-
-        # Global recorder variable
+    def __init__(self, node_name: str):
+        super().__init__(node_name=node_name)
+        self.declareParameters()
+        self.readParameters()
+        self.initRosComm()
+        
         self.recorder =  AudioToTextRecorder(**self.configs)
 
         self.get_logger().info("Speech Recognizer is on!")
 
+    def initRosComm(self):
+        self.speech_recognition_service = self.create_service(SpeechToText, self.recognizer_service_param, self.handleRecognition)
+
+    def declareParameters(self):
+        self.declare_parameter('stt_configs.compute_type', 'float32')
+        self.declare_parameter('stt_configs.spinner', False)
+        self.declare_parameter('stt_configs.model', 'small.en')
+        self.declare_parameter('stt_configs.silero_sensitivity', 0.7)
+        self.declare_parameter('stt_configs.device', 'cpu')
+        self.declare_parameter('stt_configs.webrtc_sensitivity', 1)
+        self.declare_parameter('stt_configs.post_speech_silence_duration', 1.0)
+        self.declare_parameter('stt_configs.min_length_of_recording', 2.0)
+        self.declare_parameter('stt_configs.min_gap_between_recordings', 0.0)
+        self.declare_parameter('stt_configs.enable_realtime_transcription', False)
+        self.declare_parameter('stt_configs.silero_deactivity_detection', True)
+        self.declare_parameter('stt_configs.initial_prompt', '')
+        self.declare_parameter('stt_mic_timeout', 10)
+        self.declare_parameter('services.audio_player_beep.service', '/fbot_speech/ap/audio_player_beep')
+        self.declare_parameter('services.speech_recognizer.service', '/fbot_speech/sr/speech_recognizer')
+
+
+    def readParameters(self):
+        self.audio_player_beep_param_service = self.get_parameter('services.audio_player_beep.service').get_parameter_value().string_value
+        self.recognizer_service_param = self.get_parameter('services.speech_recognizer.service').get_parameter_value().string_value
+        self.stt_mic_timeout = self.get_parameter('stt_mic_timeout').get_parameter_value().integer_value
+        self.configs={
+            'compute_type': self.get_parameter('stt_configs.compute_type').get_parameter_value().string_value,
+            'spinner': self.get_parameter('stt_configs.spinner').get_parameter_value().bool_value,
+            'model': self.get_parameter('stt_configs.model').get_parameter_value().string_value,
+            'silero_sensitivity': self.get_parameter('stt_configs.silero_sensitivity').get_parameter_value().double_value,
+            'device': self.get_parameter('stt_configs.device').get_parameter_value().string_value,
+            'webrtc_sensitivity': self.get_parameter('stt_configs.webrtc_sensitivity').get_parameter_value().integer_value,
+            'post_speech_silence_duration': self.get_parameter('stt_configs.post_speech_silence_duration').get_parameter_value().double_value,
+            'min_length_of_recording': self.get_parameter('stt_configs.min_length_of_recording').get_parameter_value().double_value,
+            'min_gap_between_recordings': self.get_parameter('stt_configs.min_gap_between_recordings').get_parameter_value().double_value,
+            'enable_realtime_transcription': self.get_parameter('stt_configs.enable_realtime_transcription').get_parameter_value().bool_value,
+            'silero_deactivity_detection': self.get_parameter('stt_configs.silero_deactivity_detection').get_parameter_value().bool_value,
+            'initial_prompt': self.get_parameter('stt_configs.initial_prompt').get_parameter_value().string_value,
+
+        }
+
+
     def delayStarterRecorder(self):
         time.sleep(0.5)
-        playsound('/home/fbot/fbot_ws/src/fbot_hri/fbot_speech/audios/beep.wav')
+        playsound('/home/vitor/fbot_ws/src/fbot_hri/fbot_speech/audios/beep.wav')
         #self.get_logger().info("Starting the recorder...")
     
     def timeout(self):
@@ -95,7 +117,7 @@ def main(args=None):
     rclpy.init(args=args)
 
     # Create the node
-    speech_recognizer_node = SpeechRecognizerNode()
+    speech_recognizer_node = SpeechRecognizerNode(node_name = 'speech_recognizer')
 
     # Spin the node to keep it running
     rclpy.spin(speech_recognizer_node)
