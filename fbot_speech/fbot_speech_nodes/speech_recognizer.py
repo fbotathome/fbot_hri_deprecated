@@ -13,7 +13,7 @@ from playsound import playsound
 from RealtimeSTT import AudioToTextRecorder
 
 DEFAULT_LANGUAGE = 'en'
-PACK_DIR = os.path.join(os.path.expanduser("~"), 'ros_workspace', 'src', 'fbot_speech')
+PACK_DIR = os.path.join(os.path.expanduser("~"), 'fbot_ws', 'src', 'fbot_hri', 'fbot_speech')
 AUDIO_DIR = os.path.join(PACK_DIR, "audios/")
 TALK_AUDIO = os.path.join(AUDIO_DIR, "beep.wav")
 
@@ -73,7 +73,9 @@ class SpeechRecognizerNode(Node):
 
     def delayStarterRecorder(self):
         time.sleep(0.5)
-        playsound('/home/vitor/fbot_ws/src/fbot_hri/fbot_speech/audios/beep.wav')
+        #This line 
+        playsound(TALK_AUDIO)
+
         #self.get_logger().info("Starting the recorder...")
     
     def timeout(self):
@@ -81,7 +83,7 @@ class SpeechRecognizerNode(Node):
         while (self.stt_mic_timeout + init_time) > ((self.get_clock().now()).nanoseconds/1e9):
             continue
         self.recorder.stop()
-        self.recorder.abort()
+
             
 
     def handleRecognition(self, req: SpeechToText.Request, response: SpeechToText.Response):
@@ -93,6 +95,7 @@ class SpeechRecognizerNode(Node):
         # Start delayed starter recorder thread
         delay_starter = threading.Thread(target=self.delayStarterRecorder)
         delay_starter.start()
+        self.get_logger().info("Start recoder")
 
         # Get recognized text
         try:
