@@ -88,11 +88,8 @@ class SpeechSynthesizerNode(Node):
             audio_player_request.data = audio_data
             audio_player_request.audio_info = audio_info
             future = audio_player_client.call_async(audio_player_request)
-
-            while not future.done():
-              continue
-
-            response = future.result()
+            future.result()
+            response.success = True
             self.get_logger().info(f"Audio data played successfully.")
         
         except Exception as e:
@@ -100,7 +97,6 @@ class SpeechSynthesizerNode(Node):
             self.get_logger().error(f"Error while synthesizing speech: {e}")
         
         return response
-
     def synthesizeSpeechCallback(self, msg: SynthesizeSpeechMessage):
         """
         @brief Callback function for the speech synthesizer subscriber.
