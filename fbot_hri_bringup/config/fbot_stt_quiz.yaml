@@ -9,9 +9,8 @@ speech_recognizer_node:
       webrtc_sensitivity: 1
       post_speech_silence_duration: 1.2
       min_length_of_recording: 3.0
-      min_gap_between_recordings: 0
+      min_gap_between_recordings: 0.0
       enable_realtime_transcription: False
       silero_deactivity_detection: True
       initial_prompt: "Goias Robocup 2006"
-
     stt_mic_timeout: 10
