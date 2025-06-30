@@ -97,7 +97,7 @@ class SpeechSynthesizerNode(Node):
             self.get_logger().error(f"Error while synthesizing speech: {e}")
         
         return response
-
+    
     def synthesizeSpeechCallback(self, msg: SynthesizeSpeechMessage):
         """
         @brief Callback function for the speech synthesizer subscriber.
