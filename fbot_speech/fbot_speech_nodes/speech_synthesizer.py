@@ -91,7 +91,7 @@ class SpeechSynthesizerNode(Node):
 
                 while self.wm.playAllData() != True:
                     continue
-                response.success = True
+                response.success = self.wm.playAllData()
                 self.get_logger().info(f"AllData: {response}")
             except:
                 response.success = False
