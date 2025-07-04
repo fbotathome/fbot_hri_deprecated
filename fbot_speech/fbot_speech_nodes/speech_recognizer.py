@@ -82,11 +82,13 @@ class SpeechRecognizerNode(Node):
         init_time = (self.get_clock().now()).nanoseconds / 1e9
         while (self.stt_mic_timeout + init_time) > ((self.get_clock().now()).nanoseconds/1e9):
             continue
+        self.get_logger().info("Timeout reached, stopping the recorder...")
         self.recorder.stop()
-
+        self.recorder.abort()
             
 
     def handleRecognition(self, req: SpeechToText.Request, response: SpeechToText.Response):
+        text = ''
         self.get_logger().info("Handling recognition request...")
 
         timeout = threading.Thread(target=self.timeout)

@@ -1,0 +1,407 @@
+2025-07-03 21:44:23.925 - RealTimeSTT: realtimestt - INFO - Starting RealTimeSTT
+2025-07-03 21:44:23.926 - RealTimeSTT: realtimestt - INFO - Initializing audio recording (creating pyAudio input stream, sample rate: 16000 buffer size: 512
+2025-07-03 21:44:23.926 - RealTimeSTT: realtimestt - DEBUG - Starting audio data worker with target_sample_rate=16000, buffer_size=512, input_device_index=None
+2025-07-03 21:44:23.926 - RealTimeSTT: realtimestt - INFO - Initializing WebRTC voice with Sensitivity 1
+2025-07-03 21:44:23.926 - RealTimeSTT: realtimestt - DEBUG - Creating PyAudio interface...
+2025-07-03 21:44:23.926 - RealTimeSTT: realtimestt - DEBUG - WebRTC VAD voice activity detection engine initialized successfully
+2025-07-03 21:44:24.033 - RealTimeSTT: realtimestt - DEBUG - No device index supplied; using default device 18
+2025-07-03 21:44:24.033 - RealTimeSTT: realtimestt - DEBUG - Retrieving highest sample rate for device index 18: {'index': 18, 'structVersion': 2, 'name': 'default', 'hostApi': 0, 'maxInputChannels': 32, 'maxOutputChannels': 32, 'defaultLowInputLatency': 0.008684807256235827, 'defaultLowOutputLatency': 0.008684807256235827, 'defaultHighInputLatency': 0.034807256235827665, 'defaultHighOutputLatency': 0.034807256235827665, 'defaultSampleRate': 44100.0}
+2025-07-03 21:44:24.033 - RealTimeSTT: realtimestt - DEBUG - Highest supported sample rate for device index 18 is 44100
+2025-07-03 21:44:24.033 - RealTimeSTT: realtimestt - DEBUG - Sample rates to try for device 18: [16000, 44100]
+2025-07-03 21:44:24.033 - RealTimeSTT: realtimestt - DEBUG - Attempting to initialize audio stream at 16000 Hz.
+2025-07-03 21:44:24.033 - RealTimeSTT: realtimestt - DEBUG - Found 19 total audio devices on the system.
+2025-07-03 21:44:24.033 - RealTimeSTT: realtimestt - DEBUG - Available input devices with input channels: [0, 5, 6, 12, 13, 14, 15, 16, 18]
+2025-07-03 21:44:24.033 - RealTimeSTT: realtimestt - DEBUG - Validating device index 18 with info: {'index': 18, 'structVersion': 2, 'name': 'default', 'hostApi': 0, 'maxInputChannels': 32, 'maxOutputChannels': 32, 'defaultLowInputLatency': 0.008684807256235827, 'defaultLowOutputLatency': 0.008684807256235827, 'defaultHighInputLatency': 0.034807256235827665, 'defaultHighOutputLatency': 0.034807256235827665, 'defaultSampleRate': 44100.0}
+2025-07-03 21:44:24.123 - RealTimeSTT: realtimestt - DEBUG - Device index 18 successfully validated.
+2025-07-03 21:44:24.123 - RealTimeSTT: realtimestt - DEBUG - Opening stream with device index 18, sample_rate=16000, chunk_size=1024
+2025-07-03 21:44:24.124 - RealTimeSTT: realtimestt - INFO - Microphone connected and validated (device index: 18, sample rate: 16000, chunk size: 1024)
+2025-07-03 21:44:24.124 - RealTimeSTT: realtimestt - DEBUG - Audio recording initialized successfully at 16000 Hz, reading 1024 frames at a time
+2025-07-03 21:44:24.463 - RealTimeSTT: realtimestt - DEBUG - Silero VAD voice activity detection engine initialized successfully
+2025-07-03 21:44:24.463 - RealTimeSTT: realtimestt - DEBUG - Starting realtime worker
+2025-07-03 21:44:24.463 - RealTimeSTT: realtimestt - DEBUG - Waiting for main transcription model to start
+2025-07-03 21:44:25.250 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:26.320 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:27.392 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:28.455 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:29.526 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:30.587 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:31.648 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:32.710 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:33.774 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:41.460 - RealTimeSTT: realtimestt - INFO - Starting RealTimeSTT
+2025-07-03 21:44:41.461 - RealTimeSTT: realtimestt - INFO - Initializing audio recording (creating pyAudio input stream, sample rate: 16000 buffer size: 512
+2025-07-03 21:44:41.462 - RealTimeSTT: realtimestt - DEBUG - Starting audio data worker with target_sample_rate=16000, buffer_size=512, input_device_index=None
+2025-07-03 21:44:41.462 - RealTimeSTT: realtimestt - INFO - Initializing WebRTC voice with Sensitivity 1
+2025-07-03 21:44:41.462 - RealTimeSTT: realtimestt - DEBUG - Creating PyAudio interface...
+2025-07-03 21:44:41.462 - RealTimeSTT: realtimestt - DEBUG - WebRTC VAD voice activity detection engine initialized successfully
+2025-07-03 21:44:41.575 - RealTimeSTT: realtimestt - DEBUG - No device index supplied; using default device 18
+2025-07-03 21:44:41.575 - RealTimeSTT: realtimestt - DEBUG - Retrieving highest sample rate for device index 18: {'index': 18, 'structVersion': 2, 'name': 'default', 'hostApi': 0, 'maxInputChannels': 32, 'maxOutputChannels': 32, 'defaultLowInputLatency': 0.008684807256235827, 'defaultLowOutputLatency': 0.008684807256235827, 'defaultHighInputLatency': 0.034807256235827665, 'defaultHighOutputLatency': 0.034807256235827665, 'defaultSampleRate': 44100.0}
+2025-07-03 21:44:41.575 - RealTimeSTT: realtimestt - DEBUG - Highest supported sample rate for device index 18 is 44100
+2025-07-03 21:44:41.575 - RealTimeSTT: realtimestt - DEBUG - Sample rates to try for device 18: [16000, 44100]
+2025-07-03 21:44:41.575 - RealTimeSTT: realtimestt - DEBUG - Attempting to initialize audio stream at 16000 Hz.
+2025-07-03 21:44:41.576 - RealTimeSTT: realtimestt - DEBUG - Found 19 total audio devices on the system.
+2025-07-03 21:44:41.576 - RealTimeSTT: realtimestt - DEBUG - Available input devices with input channels: [0, 5, 6, 12, 13, 14, 15, 16, 18]
+2025-07-03 21:44:41.576 - RealTimeSTT: realtimestt - DEBUG - Validating device index 18 with info: {'index': 18, 'structVersion': 2, 'name': 'default', 'hostApi': 0, 'maxInputChannels': 32, 'maxOutputChannels': 32, 'defaultLowInputLatency': 0.008684807256235827, 'defaultLowOutputLatency': 0.008684807256235827, 'defaultHighInputLatency': 0.034807256235827665, 'defaultHighOutputLatency': 0.034807256235827665, 'defaultSampleRate': 44100.0}
+2025-07-03 21:44:41.653 - RealTimeSTT: realtimestt - DEBUG - Device index 18 successfully validated.
+2025-07-03 21:44:41.653 - RealTimeSTT: realtimestt - DEBUG - Opening stream with device index 18, sample_rate=16000, chunk_size=1024
+2025-07-03 21:44:41.686 - RealTimeSTT: realtimestt - DEBUG - Silero VAD voice activity detection engine initialized successfully
+2025-07-03 21:44:41.686 - RealTimeSTT: realtimestt - INFO - Microphone connected and validated (device index: 18, sample rate: 16000, chunk size: 1024)
+2025-07-03 21:44:41.686 - RealTimeSTT: realtimestt - DEBUG - Audio recording initialized successfully at 16000 Hz, reading 1024 frames at a time
+2025-07-03 21:44:41.687 - RealTimeSTT: realtimestt - DEBUG - Starting realtime worker
+2025-07-03 21:44:41.687 - RealTimeSTT: realtimestt - DEBUG - Waiting for main transcription model to start
+2025-07-03 21:44:42.813 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:43.578 - RealTimeSTT: realtimestt - DEBUG - Main transcription model ready
+2025-07-03 21:44:43.578 - RealTimeSTT: realtimestt - DEBUG - RealtimeSTT initialization completed successfully
+2025-07-03 21:44:43.880 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:44.946 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:46.016 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:47.084 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:48.148 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:49.209 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:50.271 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:51.343 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:52.403 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:53.465 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:54.536 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:55.596 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:56.654 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:57.726 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:58.789 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:44:59.850 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:00.911 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:01.981 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:03.045 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:04.106 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:05.177 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:06.243 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:06.254 - RealTimeSTT: realtimestt - INFO - Setting listen time
+2025-07-03 21:45:06.290 - RealTimeSTT: realtimestt - INFO - State changed from 'inactive' to 'listening'
+2025-07-03 21:45:06.296 - RealTimeSTT: realtimestt - DEBUG - Waiting for recording start
+2025-07-03 21:45:07.303 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:08.366 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:08.815 - RealTimeSTT: realtimestt - INFO - voice activity detected
+2025-07-03 21:45:08.820 - RealTimeSTT: realtimestt - INFO - recording started
+2025-07-03 21:45:08.831 - RealTimeSTT: realtimestt - INFO - State changed from 'listening' to 'recording'
+2025-07-03 21:45:08.843 - RealTimeSTT: realtimestt - DEBUG - Waiting for recording stop
+2025-07-03 21:45:09.451 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:10.494 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:11.558 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:12.638 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:13.160 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:45:13.188 - RealTimeSTT: realtimestt - DEBUG - No samples removed, final audio length: 84480
+2025-07-03 21:45:13.188 - RealTimeSTT: realtimestt - INFO - State changed from 'recording' to 'inactive'
+2025-07-03 21:45:13.194 - RealTimeSTT: realtimestt - INFO - State changed from 'inactive' to 'transcribing'
+2025-07-03 21:45:13.194 - RealTimeSTT: realtimestt - DEBUG - Adding transcription request, no early transcription started
+2025-07-03 21:45:13.211 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:13.331 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:13.441 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:13.556 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:13.668 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:13.689 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:13.789 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:13.896 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:14.018 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:14.126 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:14.254 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:14.357 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:14.488 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:14.615 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:14.736 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:14.749 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:14.842 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:14.953 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:15.061 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:15.181 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:15.322 - RealTimeSTT: realtimestt - INFO - State changed from 'transcribing' to 'inactive'
+2025-07-03 21:45:15.339 - RealTimeSTT: realtimestt - DEBUG - Model distil-small.en completed transcription in 2.14 seconds
+2025-07-03 21:45:15.339 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:45:15.765 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:16.178 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:45:16.825 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:17.886 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:18.947 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:20.012 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:21.079 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:21.164 - RealTimeSTT: realtimestt - INFO - Setting listen time
+2025-07-03 21:45:21.169 - RealTimeSTT: realtimestt - INFO - State changed from 'inactive' to 'listening'
+2025-07-03 21:45:21.175 - RealTimeSTT: realtimestt - DEBUG - Waiting for recording start
+2025-07-03 21:45:22.144 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:23.208 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:24.217 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:25.278 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:26.301 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:26.476 - RealTimeSTT: realtimestt - INFO - voice activity detected
+2025-07-03 21:45:26.481 - RealTimeSTT: realtimestt - INFO - recording started
+2025-07-03 21:45:26.487 - RealTimeSTT: realtimestt - INFO - State changed from 'listening' to 'recording'
+2025-07-03 21:45:26.494 - RealTimeSTT: realtimestt - DEBUG - Waiting for recording stop
+2025-07-03 21:45:27.357 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:28.366 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:29.427 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:30.446 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:30.719 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:45:30.730 - RealTimeSTT: realtimestt - DEBUG - No samples removed, final audio length: 83968
+2025-07-03 21:45:30.730 - RealTimeSTT: realtimestt - INFO - State changed from 'recording' to 'inactive'
+2025-07-03 21:45:30.735 - RealTimeSTT: realtimestt - INFO - State changed from 'inactive' to 'transcribing'
+2025-07-03 21:45:30.746 - RealTimeSTT: realtimestt - DEBUG - Adding transcription request, no early transcription started
+2025-07-03 21:45:30.778 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:30.892 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:31.018 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:31.135 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:31.142 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:45:31.242 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:31.343 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:31.444 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:31.528 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:31.544 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:31.645 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:31.745 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:31.846 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:31.947 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:32.047 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:32.148 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:32.249 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:32.349 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:32.450 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:32.551 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:32.590 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:32.652 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:32.752 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:32.853 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:32.954 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:33.054 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:33.155 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:33.256 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:33.356 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:33.457 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:33.558 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:33.657 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:33.659 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:33.759 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:33.860 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:33.961 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:34.062 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:34.162 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:34.263 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:34.364 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:34.465 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:34.566 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:34.667 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:34.715 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:34.768 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:34.869 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:34.970 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:35.071 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:35.154 - RealTimeSTT: realtimestt - INFO - State changed from 'transcribing' to 'inactive'
+2025-07-03 21:45:35.155 - RealTimeSTT: realtimestt - DEBUG - Model distil-small.en completed transcription in 4.41 seconds
+2025-07-03 21:45:35.155 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:45:35.780 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:36.846 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:37.918 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:38.977 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:40.039 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:40.970 - RealTimeSTT: realtimestt - INFO - Setting listen time
+2025-07-03 21:45:40.970 - RealTimeSTT: realtimestt - INFO - State changed from 'inactive' to 'listening'
+2025-07-03 21:45:40.970 - RealTimeSTT: realtimestt - DEBUG - Waiting for recording start
+2025-07-03 21:45:41.120 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:42.168 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:43.010 - RealTimeSTT: realtimestt - INFO - voice activity detected
+2025-07-03 21:45:43.015 - RealTimeSTT: realtimestt - INFO - recording started
+2025-07-03 21:45:43.023 - RealTimeSTT: realtimestt - INFO - State changed from 'listening' to 'recording'
+2025-07-03 21:45:43.029 - RealTimeSTT: realtimestt - DEBUG - Waiting for recording stop
+2025-07-03 21:45:43.241 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:44.295 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:45.365 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:46.425 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:47.275 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:45:47.286 - RealTimeSTT: realtimestt - DEBUG - No samples removed, final audio length: 84992
+2025-07-03 21:45:47.286 - RealTimeSTT: realtimestt - INFO - State changed from 'recording' to 'inactive'
+2025-07-03 21:45:47.292 - RealTimeSTT: realtimestt - INFO - State changed from 'inactive' to 'transcribing'
+2025-07-03 21:45:47.292 - RealTimeSTT: realtimestt - DEBUG - Adding transcription request, no early transcription started
+2025-07-03 21:45:47.318 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:47.466 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:47.492 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:47.587 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:47.715 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:47.843 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:47.974 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:48.088 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:48.198 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:48.316 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:48.438 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:48.559 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:48.569 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:48.675 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:48.804 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:48.925 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:49.062 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:49.186 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:49.310 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:49.420 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:49.546 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:45:49.621 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:49.626 - RealTimeSTT: realtimestt - INFO - State changed from 'transcribing' to 'inactive'
+2025-07-03 21:45:49.627 - RealTimeSTT: realtimestt - DEBUG - Model distil-small.en completed transcription in 2.34 seconds
+2025-07-03 21:45:49.627 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:45:50.686 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:50.849 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:45:51.749 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:52.017 - RealTimeSTT: realtimestt - INFO - Setting listen time
+2025-07-03 21:45:52.022 - RealTimeSTT: realtimestt - INFO - State changed from 'inactive' to 'listening'
+2025-07-03 21:45:52.032 - RealTimeSTT: realtimestt - DEBUG - Waiting for recording start
+2025-07-03 21:45:52.814 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:53.874 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:54.941 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:56.010 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:57.076 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:58.134 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:45:59.202 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:00.266 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:01.326 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:01.846 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:46:02.226 - RealTimeSTT: realtimestt - INFO - voice activity detected
+2025-07-03 21:46:02.226 - RealTimeSTT: realtimestt - INFO - recording started
+2025-07-03 21:46:02.226 - RealTimeSTT: realtimestt - INFO - State changed from 'listening' to 'recording'
+2025-07-03 21:46:02.226 - RealTimeSTT: realtimestt - DEBUG - Waiting for recording stop
+2025-07-03 21:46:02.383 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:03.455 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:04.516 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:05.577 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:06.486 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:46:06.486 - RealTimeSTT: realtimestt - DEBUG - No samples removed, final audio length: 83968
+2025-07-03 21:46:06.486 - RealTimeSTT: realtimestt - INFO - State changed from 'recording' to 'inactive'
+2025-07-03 21:46:06.487 - RealTimeSTT: realtimestt - INFO - State changed from 'inactive' to 'transcribing'
+2025-07-03 21:46:06.487 - RealTimeSTT: realtimestt - DEBUG - Adding transcription request, no early transcription started
+2025-07-03 21:46:06.501 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:06.601 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:06.649 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:06.702 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:06.802 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:06.903 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:07.004 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:07.104 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:07.205 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:07.305 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:07.406 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:07.506 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:07.607 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:07.707 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:07.708 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:07.809 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:07.855 - RealTimeSTT: realtimestt - INFO - State changed from 'transcribing' to 'inactive'
+2025-07-03 21:46:07.856 - RealTimeSTT: realtimestt - DEBUG - Model distil-small.en completed transcription in 1.37 seconds
+2025-07-03 21:46:07.856 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:46:08.769 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:09.832 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:10.900 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:11.058 - RealTimeSTT: realtimestt - INFO - Setting listen time
+2025-07-03 21:46:11.064 - RealTimeSTT: realtimestt - INFO - State changed from 'inactive' to 'listening'
+2025-07-03 21:46:11.064 - RealTimeSTT: realtimestt - DEBUG - Waiting for recording start
+2025-07-03 21:46:11.964 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:13.026 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:14.098 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:15.161 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:16.168 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:17.236 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:18.299 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:19.369 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:20.424 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:20.979 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:46:21.434 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:22.499 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:23.560 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:24.632 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:25.692 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:26.752 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:27.814 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:28.886 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:29.947 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:31.007 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:32.075 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:33.141 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:34.200 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:35.270 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:36.335 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:37.392 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:38.455 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:39.523 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:40.587 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:41.649 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:42.718 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:43.782 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:44.842 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:45.904 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:46.975 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:48.032 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:49.096 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:50.162 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:51.228 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:51.796 - RealTimeSTT: realtimestt - INFO - voice activity detected
+2025-07-03 21:46:51.796 - RealTimeSTT: realtimestt - INFO - recording started
+2025-07-03 21:46:51.796 - RealTimeSTT: realtimestt - INFO - State changed from 'listening' to 'recording'
+2025-07-03 21:46:51.797 - RealTimeSTT: realtimestt - DEBUG - Waiting for recording stop
+2025-07-03 21:46:52.291 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:53.351 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:54.421 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:55.484 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:56.059 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:46:56.060 - RealTimeSTT: realtimestt - DEBUG - No samples removed, final audio length: 84992
+2025-07-03 21:46:56.060 - RealTimeSTT: realtimestt - INFO - State changed from 'recording' to 'inactive'
+2025-07-03 21:46:56.060 - RealTimeSTT: realtimestt - INFO - State changed from 'inactive' to 'transcribing'
+2025-07-03 21:46:56.060 - RealTimeSTT: realtimestt - DEBUG - Adding transcription request, no early transcription started
+2025-07-03 21:46:56.060 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:56.161 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:56.261 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:56.362 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:56.462 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:56.544 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:56.563 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:56.663 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:56.764 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:56.865 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:56.965 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:57.066 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:57.166 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:57.267 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:57.368 - RealTimeSTT: realtimestt - DEBUG - Receive from parent_transcription_pipe after sendiung transcription request, transcribe_count: 1
+2025-07-03 21:46:57.402 - RealTimeSTT: realtimestt - INFO - State changed from 'transcribing' to 'inactive'
+2025-07-03 21:46:57.403 - RealTimeSTT: realtimestt - DEBUG - Model distil-small.en completed transcription in 1.34 seconds
+2025-07-03 21:46:57.403 - RealTimeSTT: realtimestt - INFO - recording stopped
+2025-07-03 21:46:57.614 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:58.675 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:46:59.738 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:00.799 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:01.868 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:02.932 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:03.993 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:05.063 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:06.126 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:07.183 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:08.253 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:09.314 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:10.381 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:11.442 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:12.514 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:13.574 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:14.634 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:15.705 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:16.767 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:17.827 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:18.890 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:19.958 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:21.022 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:22.083 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:23.154 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:24.214 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:25.276 - RealTimeSTT: realtimestt - DEBUG - _audio_data_worker writing audio data into queue.
+2025-07-03 21:47:25.492 - RealTimeSTT: realtimestt - DEBUG - Debug: Caught exception in main try block
+2025-07-03 21:47:25.493 - RealTimeSTT: realtimestt - ERROR - Unhandled exeption in _recording_worker: handle is closed
+Traceback (most recent call last):
+  File "/home/fbot/.local/lib/python3.10/site-packages/RealtimeSTT/audio_recorder.py", line 1919, in _recording_worker
+    data = self.audio_queue.get(timeout=0.01)
+  File "/usr/lib/python3.10/multiprocessing/queues.py", line 117, in get
+    res = self._recv_bytes()
+  File "/usr/lib/python3.10/multiprocessing/connection.py", line 212, in recv_bytes
+    self._check_closed()
+  File "/usr/lib/python3.10/multiprocessing/connection.py", line 136, in _check_closed
+    raise OSError("handle is closed")
+OSError: handle is closed
