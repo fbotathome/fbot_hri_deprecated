@@ -79,31 +79,17 @@ class SpeechSynthesizerNode(Node):
             audio_info.rate = config["sample_rate_hz"]
             audio_info.channels = 1
             audio_info.format = 16
-
-            # Wait for the audio player service
-            self.get_logger().info(f"Calling audio player service: {self.audio_player_by_data_service_param}")
-            audio_player_client = self.create_client(AudioPlayerByData, self.audio_player_by_data_service_param)
             
-            while not audio_player_client.wait_for_service(timeout_sec=1.0):
-                self.get_logger().info(f"Waiting for {self.audio_player_by_data_service_param} service...")
-    
-
-            # Create the request and send it
-            audio_player_request = AudioPlayerByData.Request()
-            audio_player_request.data = audio_data
-            audio_player_request.audio_info = audio_info
             try:
                 if self.wm.streaming:
                     response.success = False
                     return response
-
-                data = audio_player_request.data.uint8_data
-                info = audio_player_request.audio_info
-                self.wm.setDataAndInfo(data, info)
+                
+                self.wm.setDataAndInfo(audio_data.uint8_data, audio_info)
 
                 while self.wm.playAllData() != True:
                     continue
-                response.success = True
+                response.success = self.wm.playAllData()
                 self.get_logger().info(f"AllData: {response}")
             except:
                 response.success = False
@@ -111,6 +97,7 @@ class SpeechSynthesizerNode(Node):
         except Exception as e:
             response.success = False
             self.get_logger().error(f"Error while synthesizing speech: {e}")
+        
         return response
     
     def synthesizeSpeechCallback(self, msg: SynthesizeSpeechMessage):
