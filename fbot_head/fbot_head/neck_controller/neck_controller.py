@@ -94,6 +94,7 @@ class NeckController(Node):
         self.current_angle = [0.0, 0.0]
         self.initial_angle = [180.0, 180.0]
         self.updateNeck(self.initial_angle)
+        self.joints_publish_timer = self.create_timer(5, self.updateJointsDict)
 
     def setupMotors(self) -> None:
         """
@@ -194,8 +195,11 @@ class NeckController(Node):
             msg.position.append(p)
             msg.velocity.append(v)
             msg.effort.append(e)
-
-        self.pub_joint_states.publish(msg)
+            
+        try:
+            self.pub_joint_states.publish(msg)
+        except Exception as e:
+            self.get_logger().error(f"Failed to publish joint states: {str(e)}")
 
         if (self.joints_dict['head_pan_joint'][1]<=0.3) and (self.joints_dict['head_tilt_joint'][1]<=0.3):
             if self.last_stopped_time is None:
