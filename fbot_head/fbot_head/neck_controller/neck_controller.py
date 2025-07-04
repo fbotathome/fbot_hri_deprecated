@@ -54,7 +54,7 @@ class NeckController(Node):
         try:
             self.setupMotors()
         except RuntimeError as e:
-            self.get_logger().fatal(str(e))
+            self.get_logger().error(str(e))
             return 
 
         self.pause = False
@@ -143,7 +143,6 @@ class NeckController(Node):
         ps = tf2_geometry_msgs.do_transform_point(msg, transform).point
         angle_msg = self.computeNeckStateByPoint(ps)
         self.updateNeck(angle_msg, from_updateNeckCallback=True)
-        self.get_logger().info(f"Updating neck to look at point with angles: {angle_msg}")
 
     def updateNeck(self, data:list[float], from_updateNeckCallback = False) -> None:
         """
@@ -168,7 +167,6 @@ class NeckController(Node):
             for key in self.motors:
                 self.motors[key].sendGoalAngle(self.motors_config[key]['current_angle'])
                 self.current_angle = data
-                self.get_logger().info(f'Writing angles to motors: {self.current_angle}')
 
             self.updateJointsDict()
 
@@ -201,7 +199,6 @@ class NeckController(Node):
 
         if (self.joints_dict['head_pan_joint'][1]<=0.3) and (self.joints_dict['head_tilt_joint'][1]<=0.3):
             if self.last_stopped_time is None:
-                self.get_logger().info(f"last_stopped_time was None, setting to current time {msg.header.stamp}")
                 self.last_stopped_time = msg.header.stamp
         else:
             self.last_stopped_time = None
@@ -243,7 +240,7 @@ class NeckController(Node):
         @param req: (std_srvs.srv.Empty.Request) The service request.
         """
         self.lookat_description_identifier = {'global_id': req.global_id, 'id': req.id, 'label': req.label}
-        self.get_logger().info(f"Starting lookAt with description: {self.lookat_description_identifier}")
+        self.get_logger().info(f"Starting lookAt service with description: {self.lookat_description_identifier}")
         self.sub_lookat = self.create_subscription(Detection3DArray, req.recognitions3d_topic, self.lookAtRecogCallback, 10)
         self.last_pose  = None
         self.last_pose_time = 0.
@@ -263,7 +260,6 @@ class NeckController(Node):
         @param msg: (fbot_vision_msgs.msg.Detection3DArray) The message containing the detected objects.
         """
         selected_desc = self.selectDescription(msg.detections)
-        self.get_logger().info(f"Receveid detection: {selected_desc}")
 
         if selected_desc is not None:
             header = selected_desc.header
@@ -297,15 +293,10 @@ class NeckController(Node):
                     delta = time - self.last_pose_time
 
                 if distance < max(1.5 * delta, 1.5):
-                    self.get_logger().info(f"Distance to last pose: {distance}, delta time: {delta}")
                     lookat_neck = self.computeNeckStateByPoint(ps)
                     self.last_pose = deepcopy(ps)
-                    # self.get_logger().info(f'difference: {abs(lookat_neck[0] - self.current_angle[0] + lookat_neck[1] - self.current_angle[1])}')
                     if abs(lookat_neck[0] - self.current_angle[0] + lookat_neck[1] - self.current_angle[1]) > 1.5:
-                        # lookat_neck[1] = lookat_neck[1] + 15.0 # Adjust vertical angle to avoid looking down too much
                         self.updateNeck(lookat_neck)
-                else:
-                    self.get_logger().info(f"Distance to last pose: {distance} is too high, not updating neck position. delta: {delta}")
 
                 self.last_pose_time = time
                 self.lookat_pose = None
@@ -315,7 +306,6 @@ class NeckController(Node):
         """
         @brief Callback triggered when the "look at" service times out.
         """
-        self.get_logger().info("Timeout atingido no serviço lookAt!")
         self.updateNeck(data=self.initial_angle)
 
     def getCloserDescription(self, descriptions):
