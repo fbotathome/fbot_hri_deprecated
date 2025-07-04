@@ -21,7 +21,6 @@ setup(
     maintainer_email='richardjcassis@gmail.com',
     description='TODO: Package description',
     license='Apache-2.0',
-    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'emotions_bridge = fbot_head.emotions_bridge.emotions_bridge:main',
