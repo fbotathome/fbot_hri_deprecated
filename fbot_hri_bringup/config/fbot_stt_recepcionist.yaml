@@ -12,5 +12,5 @@ speech_recognizer_node:
       min_gap_between_recordings: 0.0
       enable_realtime_transcription: False
       silero_deactivity_detection: True
-      initial_prompt: "James Michael Robert John David William Richard Joseph Thomas Christopher Mary Patricia Jennifer Linda Elizabeth Barbara Susan Jessica Karen Sarah"
+      initial_prompt: "James Michael Robert John David William Richard Joseph Thomas Christopher Mary Patricia Jennifer Linda Elizabeth Barbara Susan Jessica Karen Sarah cup bottle glass can mug coke fanta kuat pithula papaya banana"
     stt_mic_timeout: 10
