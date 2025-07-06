@@ -2,14 +2,16 @@
 
 import time
 import rclpy
+import os
+import warnings
 from rclpy.node import Node
 from fbot_speech_scripts.wav_to_mouth import WavToMouth
 from fbot_speech_msgs.srv import AudioPlayer, AudioPlayerByData, AudioStreamStart
 from audio_common_msgs.msg import AudioData
 from std_srvs.srv import Empty
-
+from playsound import playsound
+from ament_index_python.packages import get_package_share_directory
 from termcolor import colored
-import warnings
 
 warnings.filterwarnings("ignore")
 
@@ -26,6 +28,8 @@ class AudioPlayerNode(Node):
         super().__init__('audio_player')
         # Initialize WavToMouth object
         self.last_stream_data_timestamp = None
+        ws_dir = os.path.abspath(os.path.join(get_package_share_directory('fbot_speech'), '../../../..'))
+        self.file_path = os.path.join(ws_dir, "src", "fbot_hri", "fbot_speech",  "audios", "beep.wav")
         self.wm = WavToMouth()
         self.declareParameters()
         self.readParameters()
@@ -40,6 +44,8 @@ class AudioPlayerNode(Node):
         self.audioSpeechFromDataService = self.create_service(AudioPlayerByData, self.audio_player_by_data_service_param, self.audioSpeechFromData)
         self.audioStreamStartService = self.create_service(AudioStreamStart, self.audio_player_stream_start_service_param, self.audioStreamStart)
         self.audioStreamStopService = self.create_service(Empty, self.audio_player_stream_stop_service_param, self.audioStreamStop)
+        self.audioBeepService = self.create_service(Empty, self.audio_beep_param, self.audioBeep)
+
         # Create subscriber
         self.audioPlayerTopicSub = self.create_subscription(AudioData, self.audio_player_stream_data_topic_param, self.audioStreamDataCallback, 10)
         
@@ -50,6 +56,7 @@ class AudioPlayerNode(Node):
         self.declare_parameter("services.stream_start.service", "/fbot_speech/ap/stream_start")
         self.declare_parameter("services.stream_stop.service", "/fbot_speech/ap/stream_stop")
         self.declare_parameter("subscribers.stream_data.topic", "/fbot_speech/ap/stream_data")
+        self.declare_parameter("services.audioBeep.service", "/fbot_speech/ap/audio_beep")
         self.declare_parameter("stream_timeout", 10)
 
     def readParameters(self):
@@ -59,6 +66,7 @@ class AudioPlayerNode(Node):
         self.audio_player_stream_start_service_param = self.get_parameter("services.stream_start.service").get_parameter_value().string_value
         self.audio_player_stream_stop_service_param = self.get_parameter("services.stream_stop.service").get_parameter_value().string_value
         self.audio_player_stream_data_topic_param = self.get_parameter("subscribers.stream_data.topic").get_parameter_value().string_value
+        self.audio_beep_param = self.get_parameter("services.audioBeep.service").get_parameter_value().string_value
         self.stream_timeout = self.get_parameter("stream_timeout").get_parameter_value().integer_value
 
     def audioSpeechFromFile(self, request, response):
@@ -77,6 +85,11 @@ class AudioPlayerNode(Node):
         self.wm.playAllData()
 
         response.success = True
+        return response
+    
+    def audioBeep(self, request, response):
+        playsound(self.file_path)
+        
         return response
         
     def audioSpeechFromData(self, request: AudioPlayerByData.Request, response: AudioPlayerByData.Response):
