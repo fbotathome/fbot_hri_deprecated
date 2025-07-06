@@ -78,14 +78,16 @@ class SpeechSynthesizerNode(Node):
             audio_info = AudioInfo()
             audio_info.rate = config["sample_rate_hz"]
             audio_info.channels = 1
-            audio_info.format = 16
-            
+            audio_info.format = 16    
+
             try:
                 if self.wm.streaming:
                     response.success = False
                     return response
-                
-                self.wm.setDataAndInfo(audio_data.uint8_data, audio_info)
+
+                data = audio_data.uint8_data
+                info = audio_info
+                self.wm.setDataAndInfo(data, info)
 
                 while self.wm.playAllData() != True:
                     continue
@@ -93,6 +95,7 @@ class SpeechSynthesizerNode(Node):
                 self.get_logger().info(f"AllData: {response}")
             except:
                 response.success = False
+                self.get_logger().error(f"Error while synthesizing speech voice: {e}")
         
         except Exception as e:
             response.success = False

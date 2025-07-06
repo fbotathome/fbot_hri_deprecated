@@ -86,23 +86,17 @@ class AudioPlayerNode(Node):
         @param request: Request object containing the audio data and info.
         @return: Response object indicating success or failure.
         """
-        try:
-            if self.wm.streaming:
-                response.success = False
-                return response
-
-            data = request.data.uint8_data
-            info = request.audio_info
-            self.wm.setDataAndInfo(data, info)
-
-            while self.wm.playAllData() != True:
-                continue
-            response.success = True
-            self.get_logger().info(f"AllData: {response}")
-            return response
-        except:
+        if self.wm.streaming:
             response.success = False
             return response
+
+        data = request.data.uint8_data
+        info = request.audio_info
+        self.wm.setDataAndInfo(data, info)
+        self.wm.playAllData()
+
+        response.success = True
+        return response
 
     def audioStreamStart(self, request, response):
         """
