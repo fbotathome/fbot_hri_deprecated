@@ -31,6 +31,7 @@ class SpeechRecognizerNode(Node):
 
     def initRosComm(self):
         self.speech_recognition_service = self.create_service(SpeechToText, self.recognizer_service_param, self.handleRecognition)
+        self.audio_player_beep_service = self.create_client(Empty, self.audio_player_beep_param_service)
 
     def declareParameters(self):
         self.declare_parameter('stt_configs.compute_type', 'float32')
@@ -46,7 +47,7 @@ class SpeechRecognizerNode(Node):
         self.declare_parameter('stt_configs.silero_deactivity_detection', True)
         self.declare_parameter('stt_configs.initial_prompt', '')
         self.declare_parameter('stt_mic_timeout', 10)
-        self.declare_parameter('services.audio_player_beep.service', '/fbot_speech/ap/audio_player_beep')
+        self.declare_parameter('services.audio_player_beep.service', '/fbot_speech/ap/audio_beep')
         self.declare_parameter('services.speech_recognizer.service', '/fbot_speech/sr/speech_recognizer')
 
 
@@ -73,10 +74,7 @@ class SpeechRecognizerNode(Node):
 
     def delayStarterRecorder(self):
         time.sleep(0.5)
-        #This line 
-        playsound(TALK_AUDIO)
-
-        #self.get_logger().info("Starting the recorder...")
+        self.audio_player_beep_service.call(Empty.Request())
     
     def timeout(self):
         init_time = (self.get_clock().now()).nanoseconds / 1e9
