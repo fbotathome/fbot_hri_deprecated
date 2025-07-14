@@ -53,7 +53,7 @@ class SpeechRecognizerNode(Node):
 
         default_device_info = riva.client.audio_io.get_default_input_device_info()
         self.device = default_device_info['index']
-
+        self.get_logger().error(f'Boosted: {self.boosted_lm_words}')
         self.sentence = not self.word
 
 
@@ -82,7 +82,7 @@ class SpeechRecognizerNode(Node):
 
 
     def delayStarterRecorder(self):
-        time.sleep(0.5)
+        time.sleep(1)
         # self.audio_player_beep_service.call(Empty.Request())
         playsound(TALK_AUDIO)
     
@@ -123,6 +123,7 @@ class SpeechRecognizerNode(Node):
                         if not result.alternatives:
                             continue
                     if result.is_final:
+                        self.get_logger().error(f'Alternative: {result.alternatives}')
                         if self.word:
                             if result.alternatives[0].words[0].word in self.boosted_lm_words:
                                 if result.alternatives[0].words[0].confidence >=0.6:
