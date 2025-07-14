@@ -6,8 +6,10 @@ import riva.client
 from fbot_speech_msgs.srv import AudioPlayerByData, SynthesizeSpeech
 from fbot_speech_msgs.msg import SynthesizeSpeechMessage
 from audio_common_msgs.msg import AudioData, AudioInfo
+from fbot_speech_scripts.wav_to_mouth import WavToMouth
 import rclpy
 from rclpy.node import Node
+from threading import Event
 
 class SpeechSynthesizerNode(Node):
     def __init__(self):
@@ -16,6 +18,8 @@ class SpeechSynthesizerNode(Node):
         self.declareParameters()
         self.readParameters()
         self.initRosComm()
+        self.wm = WavToMouth()
+        self.event = Event()
         auth = riva.client.Auth(uri=self.riva_url)
         self.riva_tts = riva.client.SpeechSynthesisService(auth)
         self.get_logger().info("Speech Synthesizer Node initialized!")
@@ -74,33 +78,31 @@ class SpeechSynthesizerNode(Node):
             audio_info = AudioInfo()
             audio_info.rate = config["sample_rate_hz"]
             audio_info.channels = 1
-            audio_info.format = 16
+            audio_info.format = 16    
 
-            # Wait for the audio player service
-            self.get_logger().info(f"Calling audio player service: {self.audio_player_by_data_service_param}")
-            audio_player_client = self.create_client(AudioPlayerByData, self.audio_player_by_data_service_param)
-            
-            while not audio_player_client.wait_for_service(timeout_sec=1.0):
-                self.get_logger().info(f"Waiting for {self.audio_player_by_data_service_param} service...")
-            
-            # Create the request and send it
-            audio_player_request = AudioPlayerByData.Request()
-            audio_player_request.data = audio_data
-            audio_player_request.audio_info = audio_info
-            future = audio_player_client.call_async(audio_player_request)
+            try:
+                if self.wm.streaming:
+                    response.success = False
+                    return response
 
-            while not future.done():
-              continue
+                data = audio_data.uint8_data
+                info = audio_info
+                self.wm.setDataAndInfo(data, info)
 
-            response = future.result()
-            self.get_logger().info(f"Audio data played successfully.")
+                while self.wm.playAllData() != True:
+                    continue
+                response.success = self.wm.playAllData()
+                self.get_logger().info(f"AllData: {response}")
+            except:
+                response.success = False
+                self.get_logger().error(f"Error while synthesizing speech voice: {e}")
         
         except Exception as e:
             response.success = False
             self.get_logger().error(f"Error while synthesizing speech: {e}")
         
         return response
-
+    
     def synthesizeSpeechCallback(self, msg: SynthesizeSpeechMessage):
         """
         @brief Callback function for the speech synthesizer subscriber.

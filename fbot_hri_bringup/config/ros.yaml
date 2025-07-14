@@ -27,6 +27,9 @@
       audio_player_by_data:
         service: "/fbot_speech/ap/audio_player_by_data"
 
+      audio_beep:
+        service: "/fbot_speech/ap/audio_beep"
+
       stream_start:
         service: "/fbot_speech/ap/stream_start"
 
