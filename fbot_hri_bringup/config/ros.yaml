@@ -18,6 +18,9 @@
       speech_recognizer:
         service: "/fbot_speech/sr/speech_recognizer"
 
+      asr_recognizer:
+        service: "/fbot_speech/sr/speech_recognizer_asr"
+
       speech_sythesizer:
         service: "/fbot_speech/ss/say_something"
 

@@ -30,6 +30,7 @@ setup(
             'speech_recognizer_old = fbot_speech_nodes.speech_recognizer_old:main',
             'detector_hotword_node = fbot_speech_nodes.detector_hotword_node:main',
             'audio_player = fbot_speech_nodes.audio_player:main',
+            'asr_riva = fbot_speech_nodes.speech_recognizer_riva:main',
             ],
     },
     scripts=[

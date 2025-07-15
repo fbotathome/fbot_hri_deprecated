@@ -1,0 +1,5 @@
+string[] boosted_lm_words
+int32 boost
+bool sentence
+---
+string text

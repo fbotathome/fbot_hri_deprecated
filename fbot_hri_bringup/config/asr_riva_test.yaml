@@ -1,0 +1,7 @@
+asr_riva_node:
+  ros__parameters:
+    boosted_lm_words: ['cola', 'ice tea', 'juice pack', 'milk', 'orange juice', 'red wine', 'tropica juice', 'chocolate jelo', 'coffe ground', 'mustard', 'spam', 'srawberry jello', 'sugar', 'tomato soup', 'funa']
+    boost: 40
+    word: False
+    stt_mic_timeout: 10
+    riva.url: localhost:50051
