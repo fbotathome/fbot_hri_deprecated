@@ -63,7 +63,7 @@ class SpeechRecognizerNode(Node):
         self.declare_parameter('riva.url', 'localhost:50051')
         self.declare_parameter('stt_mic_timeout', 10)
         self.declare_parameter('services.audio_player_beep.service', '/fbot_speech/ap/audio_beep')
-        self.declare_parameter('services.speech_recognizer.service', '/fbot_speech/sr/speech_recognizer')
+        self.declare_parameter('services.asr_recognizer.service', '/fbot_speech/sr/speech_recognizer_asr')
 
 
     def readParameters(self):
