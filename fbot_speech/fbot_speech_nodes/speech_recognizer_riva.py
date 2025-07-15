@@ -68,7 +68,7 @@ class SpeechRecognizerNode(Node):
 
     def readParameters(self):
         self.audio_player_beep_param_service = self.get_parameter('services.audio_player_beep.service').get_parameter_value().string_value
-        self.recognizer_service_param = self.get_parameter('services.speech_recognizer.service').get_parameter_value().string_value
+        self.recognizer_service_param = self.get_parameter('services.asr_recognizer.service').get_parameter_value().string_value
         self.stt_mic_timeout = self.get_parameter('stt_mic_timeout').get_parameter_value().integer_value
         self.riva_url = self.get_parameter('riva.url').get_parameter_value().string_value
 
@@ -122,7 +122,7 @@ class SpeechRecognizerNode(Node):
                     if result.is_final:
                         self.get_logger().error(f'Alternative: {result.alternatives}')
                         if self.word:
-                            if result.alternatives[0].words[0].word in self.boosted_lm_words:
+                            if result.alternatives[0].words[0].word in req.boosted_lm_words:
                                 if result.alternatives[0].words[0].confidence >=0.6:
                                     good_output = result.alternatives[0].words[0].word
                                     res.text = good_output
@@ -135,7 +135,7 @@ class SpeechRecognizerNode(Node):
                         elif self.sentence:
                             for alternative in result.alternatives:
                                 for word in alternative.words:
-                                    if word.word in self.boosted_lm_words:
+                                    if word.word in req.boosted_lm_words:
                                         res.text = result.alternatives[0].transcript 
                                         audio_chunk_iterator.close()
                                         return res
