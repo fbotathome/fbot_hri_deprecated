@@ -5,7 +5,7 @@ import rclpy
 from rclpy.node import Node
 from std_srvs.srv import Empty
 import riva.client
-from fbot_speech_msgs.srv import SpeechToText
+from fbot_speech_msgs.srv import SpeechToTextASR
 import riva.client.proto.riva_asr_pb2 as rasr
 import riva.client.audio_io
 import os
@@ -56,7 +56,7 @@ class SpeechRecognizerNode(Node):
 
 
     def initRosComm(self):
-        self.speech_recognition_service = self.create_service(SpeechToText, self.recognizer_service_param, self.handleRecognition)
+        self.speech_recognition_service = self.create_service(SpeechToTextASR, self.recognizer_service_param, self.handleRecognition)
         self.audio_player_beep_service = self.create_client(Empty, self.audio_player_beep_param_service)
 
     def declareParameters(self):
@@ -78,7 +78,7 @@ class SpeechRecognizerNode(Node):
         # self.audio_player_beep_service.call(Empty.Request())
         playsound(TALK_AUDIO)
     
-    def handleRecognition(self, req: SpeechToText.Request, res: SpeechToText.Response):
+    def handleRecognition(self, req: SpeechToTextASR.Request, res: SpeechToTextASR.Response):
         
         with riva.client.audio_io.MicrophoneStream(
                                                         rate =16000,
