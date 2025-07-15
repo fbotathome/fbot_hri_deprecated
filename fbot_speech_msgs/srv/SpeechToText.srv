@@ -1,6 +1,5 @@
-string prompt
-
-# https://github.com/openai/whisper/blob/main/whisper/tokenizer.py for list of languages
-string lang
+string[] boosted_lm_words
+int32 boost
+bool word
 ---
 string text

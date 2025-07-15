@@ -43,7 +43,7 @@ class SpeechRecognizerNode(Node):
 
         riva.client.add_endpoint_parameters_to_config(
             self.config,
-            start_history= 100,
+            start_history= 50,
             start_threshold= -1,
             stop_history= 500,
             stop_history_eou= 700,
@@ -53,8 +53,6 @@ class SpeechRecognizerNode(Node):
 
         default_device_info = riva.client.audio_io.get_default_input_device_info()
         self.device = default_device_info['index']
-        self.get_logger().error(f'Boosted: {self.boosted_lm_words}')
-        self.sentence = not self.word
 
 
     def initRosComm(self):
@@ -62,33 +60,26 @@ class SpeechRecognizerNode(Node):
         self.audio_player_beep_service = self.create_client(Empty, self.audio_player_beep_param_service)
 
     def declareParameters(self):
-        self.declare_parameter('boosted_lm_words', ['yes', 'no'])
         self.declare_parameter('riva.url', 'localhost:50051')
-        self.declare_parameter('boost', 20)
         self.declare_parameter('stt_mic_timeout', 10)
         self.declare_parameter('services.audio_player_beep.service', '/fbot_speech/ap/audio_beep')
         self.declare_parameter('services.speech_recognizer.service', '/fbot_speech/sr/speech_recognizer')
-        self.declare_parameter('word', True)
 
 
     def readParameters(self):
         self.audio_player_beep_param_service = self.get_parameter('services.audio_player_beep.service').get_parameter_value().string_value
         self.recognizer_service_param = self.get_parameter('services.speech_recognizer.service').get_parameter_value().string_value
         self.stt_mic_timeout = self.get_parameter('stt_mic_timeout').get_parameter_value().integer_value
-        self.boosted_lm_words = self.get_parameter('boosted_lm_words').get_parameter_value().string_array_value
-        self.boost = self.get_parameter('boost').get_parameter_value().integer_value
-        self.word = self.get_parameter('word').get_parameter_value().bool_value
         self.riva_url = self.get_parameter('riva.url').get_parameter_value().string_value
 
 
     def delayStarterRecorder(self):
-        time.sleep(1)
+        time.sleep(0.75)
         # self.audio_player_beep_service.call(Empty.Request())
         playsound(TALK_AUDIO)
     
     def handleRecognition(self, req: SpeechToText.Request, res: SpeechToText.Response):
         
-        self.get_logger().error('Aqui chegou')
         with riva.client.audio_io.MicrophoneStream(
                                                         rate =16000,
                                                         chunk=512,
@@ -96,17 +87,23 @@ class SpeechRecognizerNode(Node):
                                                     ) as audio_chunk_iterator:
             speech_context = rasr.SpeechContext()
             self.get_logger().error('Passou')
-            resultado_bom = ''
+            good_output = ''
             bad_output = ''
             very_bad_output = ''
             delay_starter = threading.Thread(target=self.delayStarterRecorder)
 
-            if self.boosted_lm_words != '':
-                speech_context.phrases.extend(self.boosted_lm_words)
-                speech_context.boost = self.boost
+            if req.boosted_lm_words != '':
+                speech_context.phrases.extend(req.boosted_lm_words)
+                speech_context.boost = req.boost
                 self.config.config.speech_contexts.clear()
                 self.config.config.speech_contexts.extend([speech_context])
             
+            if req.word:
+                self.word = True
+                self.sentence = False
+            else:
+                self.word = False
+                self.sentence = True
 
 
             output = self.riva_asr.streaming_response_generator(
@@ -127,8 +124,8 @@ class SpeechRecognizerNode(Node):
                         if self.word:
                             if result.alternatives[0].words[0].word in self.boosted_lm_words:
                                 if result.alternatives[0].words[0].confidence >=0.6:
-                                    resultado_bom = result.alternatives[0].words[0].word
-                                    res.text = resultado_bom
+                                    good_output = result.alternatives[0].words[0].word
+                                    res.text = good_output
                                     audio_chunk_iterator.close()
                                     return res
                                 else:
