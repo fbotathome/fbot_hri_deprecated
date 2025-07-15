@@ -245,6 +245,8 @@ class NeckController(Node):
         """
         self.lookat_description_identifier = {'global_id': req.global_id, 'id': req.id, 'label': req.label}
         self.get_logger().info(f"Starting lookAt service with description: {self.lookat_description_identifier}")
+        if isinstance(req.initial_angle, list) and len(req.initial_angle) == 2:
+            self.initial_angle = tuple(req.initial_angle)
         self.sub_lookat = self.create_subscription(Detection3DArray, req.recognitions3d_topic, self.lookAtRecogCallback, 10)
         self.last_pose  = None
         self.last_pose_time = 0.
