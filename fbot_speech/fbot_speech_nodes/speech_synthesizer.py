@@ -11,14 +11,13 @@ import rclpy
 from rclpy.node import Node
 from threading import Event
 
-class SpeechSynthesizerNode(Node):
+class SpeechSynthesizerNode(WavToMouth):
     def __init__(self):
-        super().__init__('speech_synthesizer')
+        super().__init__(node_name='speech_synthesizer')
         self.get_logger().info("Initializing Speech Synthesizer Node...")
         self.declareParameters()
         self.readParameters()
         self.initRosComm()
-        self.wm = WavToMouth()
         self.event = Event()
         auth = riva.client.Auth(uri=self.riva_url)
         self.riva_tts = riva.client.SpeechSynthesisService(auth)
@@ -81,17 +80,17 @@ class SpeechSynthesizerNode(Node):
             audio_info.format = 16    
 
             try:
-                if self.wm.streaming:
+                if self.streaming:
                     response.success = False
                     return response
 
                 data = audio_data.uint8_data
                 info = audio_info
-                self.wm.setDataAndInfo(data, info)
+                self.setDataAndInfo(data, info)
 
-                while self.wm.playAllData() != True:
+                while self.playAllData() != True:
                     continue
-                response.success = self.wm.playAllData()
+                response.success = self.playAllData()
                 self.get_logger().info(f"AllData: {response}")
             except:
                 response.success = False
