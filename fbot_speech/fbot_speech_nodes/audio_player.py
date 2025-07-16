@@ -15,7 +15,7 @@ from termcolor import colored
 
 warnings.filterwarnings("ignore")
 
-class AudioPlayerNode(Node):
+class AudioPlayerNode(WavToMouth):
     """
     @details This class provides services to play audio files, stream audio data, and stop streaming.
     """
@@ -25,12 +25,11 @@ class AudioPlayerNode(Node):
         @brief Constructor for the AudioPlayerNode class.
         @details Initializes the node, declares parameters, and sets up services and subscribers.
         """
-        super().__init__('audio_player')
+        super().__init__(node_name='audio_player')
         # Initialize WavToMouth object
         self.last_stream_data_timestamp = None
         ws_dir = os.path.abspath(os.path.join(get_package_share_directory('fbot_speech'), '../../../..'))
         self.file_path = os.path.join(ws_dir, "src", "fbot_hri", "fbot_speech",  "audios", "beep.wav")
-        self.wm = WavToMouth()
         self.declareParameters()
         self.readParameters()
         self.initRosComm()
@@ -76,13 +75,13 @@ class AudioPlayerNode(Node):
         @param request: Request object containing the audio file path.
         @return: Response object indicating success or failure.
         """
-        if self.wm.streaming:
+        if self.streaming:
             response.success = False
             return response
 
         filepath = request.audio_path
-        self.wm.setFilepath(filepath)
-        self.wm.playAllData()
+        self.setFilepath(filepath)
+        self.playAllData()
 
         response.success = True
         return response
@@ -99,14 +98,14 @@ class AudioPlayerNode(Node):
         @param request: Request object containing the audio data and info.
         @return: Response object indicating success or failure.
         """
-        if self.wm.streaming:
+        if self.streaming:
             response.success = False
             return response
 
         data = request.data.uint8_data
         info = request.audio_info
-        self.wm.setDataAndInfo(data, info)
-        self.wm.playAllData()
+        self.setDataAndInfo(data, info)
+        self.playAllData()
 
         response.success = True
         return response
@@ -118,14 +117,14 @@ class AudioPlayerNode(Node):
         @param request: Request object containing the audio info.
         @return: Response object indicating success or failure.
         """
-        if self.wm.streaming:
+        if self.streaming:
             response.success = False
             return response
         
         self.last_stream_data_timestamp = self.get_clock().now()
         info = request.audio_info
-        self.wm.setAudioInfo(info)
-        self.wm.startStream()
+        self.setAudioInfo(info)
+        self.startStream()
 
         response.success = True
         return response
@@ -137,9 +136,9 @@ class AudioPlayerNode(Node):
         @param request: Request object (not used).
         @return: Response object indicating success or failure.
         """
-        self.wm.requestStopStream()
+        self.requestStopStream()
         self.last_stream_data_timestamp = None
-        while self.wm.streaming:
+        while self.streaming:
             time.sleep(0.1)
         response.success = True
         return response
@@ -151,9 +150,9 @@ class AudioPlayerNode(Node):
         @param data: Audio data received from the stream.
         @return: None
         """
-        if self.wm.streaming:
+        if self.streaming:
             self.last_stream_data_timestamp = self.get_clock().now()
-            self.wm.streamDataCallback(data)
+            self.streamDataCallback(data)
 
     def audioCheckStreamTimeout(self):
         """
@@ -161,12 +160,12 @@ class AudioPlayerNode(Node):
         This function checks if the stream has timed out based on the last stream data timestamp. If it has, it stops the stream.
         @return: None
         """
-        if self.wm.streaming:
+        if self.streaming:
             if self.last_stream_data_timestamp is not None:
                 now = self.get_clock().now()
                 if now - self.last_stream_data_timestamp >= rclpy.duration.Duration(seconds=self.stream_timeout):
                     self.get_logger().info('STREAM TIMEOUT')
-                    self.wm.requestStopStream()
+                    self.requestStopStream()
                     self.last_stream_data_timestamp = None
 
 def main(args=None):

@@ -18,8 +18,8 @@ def mapRange(x, in_min, in_max, out_min, out_max):
 
 class WavToMouth(Node):
 
-    def __init__(self):
-        super().__init__('wav_to_mouth')  # ROS 2 requires a node name
+    def __init__(self, node_name = 'wav_to_mouth'):
+        super().__init__(node_name=node_name)  # ROS 2 requires a node name
         
         self.chunk_size = self.get_parameter_or("chunk_size", 2048)
 
