@@ -119,7 +119,7 @@ class RivaRecognizerNode(Node):
                             continue
                     if result.is_final:
                         if self.word:
-                            if result.alternatives[0].words[0].word in self.boosted_lm_words:
+                            if result.alternatives[0].words[0].word in req.boosted_lm_words:
                                 if result.alternatives[0].words[0].confidence >=0.6:
                                     good_output = result.alternatives[0].words[0].word
                                     res.text = good_output
@@ -132,7 +132,7 @@ class RivaRecognizerNode(Node):
                         elif self.sentence:
                             for alternative in result.alternatives:
                                 for word in alternative.words:
-                                    if word.word in self.boosted_lm_words:
+                                    if word.word in req.boosted_lm_words:
                                         res.text = result.alternatives[0].transcript 
                                         audio_chunk_iterator.close()
                                         return res
