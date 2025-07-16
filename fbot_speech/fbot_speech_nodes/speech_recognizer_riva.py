@@ -9,7 +9,7 @@ import time
 import threading
 from rclpy.node import Node
 from std_srvs.srv import Empty
-from fbot_speech_msgs.srv import SpeechToTextASR
+from fbot_speech_msgs.srv import RivaToText
 from playsound import playsound
 
 DEFAULT_LANGUAGE = 'en'
@@ -20,8 +20,8 @@ TALK_AUDIO = os.path.join(AUDIO_DIR, "beep.wav")
 
 class RivaRecognizerNode(Node):
     def __init__(self):
-        super().__init__('speech_recognizer')
-        self.get_logger().info("Initializing Speech Recognizer Node...")
+        super().__init__('riva_recognizer_node')
+        self.get_logger().info("Initializing Riva Recognizer Node...")
         self.declareParameters()
         self.readParameters()
         self.initRosComm()
@@ -55,14 +55,14 @@ class RivaRecognizerNode(Node):
 
 
     def initRosComm(self):
-        self.speech_recognition_service = self.create_service(SpeechToTextASR, self.recognizer_service_param, self.handleRecognition)
+        self.speech_recognition_service = self.create_service(RivaToText, self.recognizer_service_param, self.handleRecognition)
         self.audio_player_beep_service = self.create_client(Empty, self.audio_player_beep_param_service)
 
     def declareParameters(self):
         self.declare_parameter('riva.url', 'localhost:50051')
         self.declare_parameter('stt_mic_timeout', 10)
         self.declare_parameter('services.audio_player_beep.service', '/fbot_speech/ap/audio_beep')
-        self.declare_parameter('services.asr_recognizer.service', '/fbot_speech/sr/speech_recognizer_asr')
+        self.declare_parameter('services.asr_recognizer.service', '/fbot_speech/sr/asr_recognizer')
 
 
     def readParameters(self):
@@ -77,7 +77,7 @@ class RivaRecognizerNode(Node):
         self.audio_player_beep_service.call(Empty.Request())
         #playsound(TALK_AUDIO)
     
-    def handleRecognition(self, req: SpeechToTextASR.Request, res: SpeechToTextASR.Response):
+    def handleRecognition(self, req: RivaToText.Request, res: RivaToText.Response):
         
         with riva.client.audio_io.MicrophoneStream(
                                                         rate =16000,
