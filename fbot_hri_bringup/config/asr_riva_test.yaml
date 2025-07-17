@@ -4,4 +4,4 @@ asr_riva_node:
     boost: 40
     word: False
     stt_mic_timeout: 10
-    riva.url: localhost:50051
+    riva.url: jetson:50051

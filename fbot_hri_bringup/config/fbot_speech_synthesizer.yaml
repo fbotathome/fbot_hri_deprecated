@@ -1,7 +1,7 @@
 speech_synthesizer_node:
   ros__parameters:
     riva:
-      url: "localhost:50051"
+      url: "jetson:50051"
 
     tts_configs:
       language_code: "en-US"

@@ -11,6 +11,7 @@ from rclpy.node import Node
 from std_srvs.srv import Empty
 from fbot_speech_msgs.srv import RivaToText
 from playsound import playsound
+from copy import deepcopy
 
 DEFAULT_LANGUAGE = 'en'
 PACK_DIR = os.path.join(os.path.expanduser("~"), 'jetson_ws', 'src', 'fbot_hri', 'fbot_speech')
@@ -78,7 +79,7 @@ class RivaRecognizerNode(Node):
         #playsound(TALK_AUDIO)
     
     def handleRecognition(self, req: RivaToText.Request, res: RivaToText.Response):
-        
+        config_service = deepcopy(self.config)
         with riva.client.audio_io.MicrophoneStream(
                                                         rate =16000,
                                                         chunk=512,
@@ -89,12 +90,12 @@ class RivaRecognizerNode(Node):
             bad_output = ''
             very_bad_output = ''
             delay_starter = threading.Thread(target=self.delayStarterRecorder)
+            
 
             if req.boosted_lm_words != '':
                 speech_context.phrases.extend(req.boosted_lm_words)
                 speech_context.boost = req.boost
-                self.config.config.speech_contexts.clear()
-                self.config.config.speech_contexts.extend([speech_context])
+                config_service.config.speech_contexts.extend([speech_context])
             
             if req.sentence:
                 self.sentence = True
@@ -106,7 +107,7 @@ class RivaRecognizerNode(Node):
 
             output = self.riva_asr.streaming_response_generator(
                     audio_chunks=audio_chunk_iterator,
-                    streaming_config=self.config)
+                    streaming_config=config_service)
             
             start = time.time() + self.stt_mic_timeout
             delay_starter.start()
