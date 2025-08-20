@@ -19,7 +19,7 @@ class EmotionsBridge(Node):
         super().__init__('emotions_bridge')
 
         try:
-            self.serial = serial.Serial('/dev/ttyNECK')
+            self.serial = serial.Serial('/dev/ttyUSB0')
         except serial.SerialException as e:
             self.get_logger().error(f"Serial port error: {e}")
             return
@@ -36,7 +36,6 @@ class EmotionsBridge(Node):
         self.sub_emotion = self.create_subscription(String, 'fbot_face/emotion', self.emotionCallback, 10)
 
         time.sleep(2)
-        self.sendMotorsConfig()
         
     def sendMotorsConfig(self) -> None:  
         """
@@ -47,23 +46,26 @@ class EmotionsBridge(Node):
         retries = 0
         success = False
 
-        while not success and retries<max_retries:
         
-            motors_pins: dict = {
-                "cmd": 1
-            }
+        motors_pins: dict = {
+            "cmd": 1
+        }
 
-            for motor in self.motors:
+        for motor in self.motors:
 
-                motors_pins[motor] = self.get_parameter(motor+'.pin').value
+            motors_pins[motor] = self.get_parameter(motor+'.pin').value
 
-            data_str = json.dumps(motors_pins)
+        data_str = json.dumps(motors_pins)
 
-            data_bytes = data_str.encode('utf-8')
+        data_bytes = data_str.encode('utf-8')
 
-            self.serial.write(data_bytes)
-
+        self.serial.write(data_bytes)
+        self.get_logger().info(f'Sent motor configuration: {data_str}')
+        
+        while not success and retries<max_retries:
+            self.get_logger().info(f'Waiting for motor configuration acknowledgment... Attempt {retries+1}/{max_retries}')
             if self.waitSerialResponse("success"):
+                self.get_logger().info('Motor configuration successfully sent and acknowledged by the microcontroller.')
                 success = True
             else:
                 retries+=1
@@ -74,18 +76,20 @@ class EmotionsBridge(Node):
         @param response_msg: (str) The expected response message.  
         """
         received_msg = ""
-
+        number_of_dict = 0
         while True:
             if self.serial.in_waiting > 0:
-                received_msg += self.serial.read(self.serial.in_waiting).decode('utf-8')
-
-                if "}" in received_msg: 
+                try:
+                    received_msg += self.serial.read(self.serial.in_waiting).decode('utf-8')
+                except UnicodeDecodeError as e:
+                    self.get_logger().error(f"Error decoding serial data: {e}")
+                    return False
+                if "{" in received_msg and received_msg.count("}") == received_msg.count("{"): 
                     break
 
         start_index = received_msg.find("{\"response\"")
-        end_index = received_msg.find("}", start_index)
+        end_index = received_msg.rfind("}")
         message = received_msg[start_index : end_index+1]
-
         received_json = json.loads(message)
 
         if response_msg == received_json["response"]:
@@ -109,6 +113,10 @@ class EmotionsBridge(Node):
         @brief Retrieves motor values for the given emotion and sends them as a JSON-encoded string via serial communication.
         @param emotion: (str) The emotion to be sent.  
         """
+        if self.motors is None:
+            self.get_logger().error("Motors configuration not loaded. Cannot send emotion.")
+            return
+
         log_message = ''
 
         motors_dict = {
@@ -116,6 +124,10 @@ class EmotionsBridge(Node):
         }
 
         for motor in self.motors:
+            if not self.has_parameter(motor+'.'+emotion):
+                self.get_logger().error(f"Parameter '{motor}.{emotion}' not declared. Cannot send emotion to motor '{motor}'.")
+                return
+            
             write_msg = [motor, self.get_parameter(motor+'.'+emotion).value] #opção sem namespace
 
             motors_dict[motor] = write_msg[1]
@@ -125,6 +137,9 @@ class EmotionsBridge(Node):
         data_str = json.dumps(motors_dict)
 
         data_bytes = data_str.encode('utf-8')
+
+        self.get_logger().info(f'Sending emotion: {emotion}\n{log_message}')
+        self.get_logger().info(f'Sending data: {data_str}')
 
         self.serial.write(data_bytes)
 

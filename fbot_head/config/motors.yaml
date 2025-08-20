@@ -2,42 +2,42 @@ emotions_bridge:
   ros__parameters:
 
       eyebrow_left_vert:
-        pin: 2
-        start_angle: 10
-        final_angle: 150
+        pin: 0
+        start_angle: 30 ##tested
+        final_angle: 150  ##tested
         type: 'percentual'
 
-        neutral: 65
+        neutral: 150
         happy: 22
         sad: 105
-        surprised: 15
+        surprised: 30
         angry: 95
         suspicious: 115
         sleepy: 80
 
 
       eyebrow_right_vert: 
-        pin: 4
-        start_angle: 30
-        final_angle: 150
+        pin: 3
+        start_angle: 25 ##tested -> invertido, o final é o trilho recolhido
+        final_angle: 150 ##tested  
         type: 'percentual'
 
-        neutral: 12
+        neutral: 25
         happy: 120
         sad: 80
-        surprised: 155
+        surprised: 150
         angry: 90
-        suspicious: 155
+        suspicious: 150
         sleepy: 70
 
 
       eyebrow_left_rot:
-        pin: 5
-        start_angle: 80
-        final_angle: 180
+        pin: 4
+        start_angle: 115 ##tested
+        final_angle: 175 ##tested
         type: 'rawangle'
     
-        neutral: 120
+        neutral: 145
         happy: 120
         sad: 10
         surprised: 130
@@ -47,12 +47,12 @@ emotions_bridge:
 
 
       eyebrow_right_rot:
-        pin: 12
-        start_angle: 110
-        final_angle: 180
+        pin: 7
+        start_angle: 105 ##tested
+        final_angle: 165 ##tested 
         type: 'rawangle'
 
-        neutral: 50
+        neutral: 135
         happy: 43
         sad: 170
         surprised: 35
@@ -62,12 +62,12 @@ emotions_bridge:
 
 
       eyelid_left: 
-        pin: 13
-        start_angle: 10
-        final_angle: 100
+        pin: 8
+        start_angle: 10 ##tested - acho
+        final_angle: 133 ##tested
         type: 'percentual'
 
-        neutral: 92
+        neutral: 10
         happy: 112
         sad: 105
         surprised: 125
@@ -77,12 +77,12 @@ emotions_bridge:
 
 
       eyelid_right:
-        pin: 14
-        start_angle: 0
-        final_angle: 100
+        pin: 11
+        start_angle: 35 ##tested
+        final_angle: 140 #BARULHO 
         type: 'percentual'
 
-        neutral: 87
+        neutral: 140
         happy: 75
         sad: 78
         surprised: 60
