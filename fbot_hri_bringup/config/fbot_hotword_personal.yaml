@@ -1,0 +1,6 @@
+detector_hotword_node:
+  ros__parameters:
+    fbot_hotword_detection:
+      sensibility: 0.7
+      words: ['Hello Boris;Hello-Boris_en_linux_v3_0_0.ppn', "It's right;It--s-right_en_linux_v3_0_0.ppn", "It's wrong;It--s-wrong_en_linux_v3_0_0.ppn"]
+        
